@@ -17,6 +17,26 @@ function ScrollToTop() {
   return null;
 }
 
+function PageTitle() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    const titles = {
+      "/": "Wolf Pack DNA",
+      "/team": "Meet the Team",
+      "/services": "Our Services",
+      "/cases": "Cases",
+      "/donate": "Make a Donation",
+    };
+    const defaultTitle = "Wolf Pack DNA";
+    if (pathname.startsWith("/inquiry/")) {
+      document.title = "Make an Inquiry";
+    } else {
+      document.title = titles[pathname] || defaultTitle;
+    }
+  }, [pathname]);
+  return null;
+}
+
 function App() {
   return (
     <div
@@ -27,6 +47,7 @@ function App() {
     >
       <Router>
         <ScrollToTop />
+        <PageTitle />
         <Routes>
           <Route path="/" element={<Home/>} />
           <Route path="/team" element={<Team/>} />
