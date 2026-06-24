@@ -1,0 +1,10 @@
+declare module './Home.jsx';
+declare module './Services.jsx';
+declare module './Team.jsx';
+declare module './Cases.jsx';
+declare module './Donate.jsx';
+declare module './Inquiry.jsx';
+declare module './components/navbar.jsx';
+declare module './components/footer.jsx';
+declare module './components/card.jsx';
+declare module './components/modal.jsx';

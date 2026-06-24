@@ -14,10 +14,13 @@
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
+    "allowJs": true,
+    "checkJs": false,
 
     /* Linting */
     "noUnusedLocals": true,
     "noUnusedParameters": true,
+    "noImplicitAny": false,
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
