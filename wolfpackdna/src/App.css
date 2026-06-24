@@ -238,7 +238,7 @@ p {
 .cta-btn {
   background: #70a1a6;
   font-family: font;
-  font-weight: bold;
+  font-weight: normal;
   color: rgba(0, 0, 0, 0.7);
   border: none;
   padding: 0px 18px;
@@ -248,12 +248,13 @@ p {
   align-items: center;
   gap: 8px;
   white-space: nowrap;
+  transition: background 0.1s ease;
 }
 
 .inq-btn {
   background: #70a1a6;
   font-family: font;
-  font-weight: bold;
+  font-weight: normal;
   color: rgba(0, 0, 0, 0.7);
   border: none;
   padding: 9px 18px;
@@ -263,7 +264,7 @@ p {
   align-items: center;
   gap: 8px;
   white-space: nowrap;
-  transition: background 0.15s ease;
+  transition: background 0.1s ease;
 }
 
 .inq-btn:hover {
@@ -272,7 +273,7 @@ p {
 
 .chevron {
   display: inline-block;
-  transition: transform 0.15s;
+  transition: transform 0.1s;
   font-size: 30px;
 }
 
@@ -310,7 +311,7 @@ p {
 }
 
 .recent-cases-title {
-  font-weight: bold;
+  font-weight: normal;
   font-size: 17.5px;
   margin: 0;
   color: rgba(0, 0, 0, 0.7);
@@ -347,7 +348,7 @@ p {
   color: rgb(0,0,0,0.7);
   font-size: 17.5px;
   background-color: rgba(216, 216, 216, 0.5);
-  height: 400px;
+  min-height: 400px;
   display: flex;
   align-items: center;
   padding: 40px;
@@ -359,11 +360,45 @@ p {
   color: rgb(0,0,0,0.7);
   font-size: 17.5px;
   background-color: rgba(255, 255, 255);
-  height: 400px;
+  min-height: 400px;
   display: flex;
   align-items: center;
   padding: 40px;
   gap: 40px;
+}
+
+@media (max-width: 600px) {
+  .section-law-enforcement,
+  .section-genetic-genealogy {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+    gap: 24px;
+    position: relative;
+  }
+
+  .section-law-enforcement .right,
+  .section-genetic-genealogy .right {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .section-law-enforcement .right .about-img-placeholder,
+  .section-genetic-genealogy .right .about-img-placeholder {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: auto;
+  }
+
+  .section-law-enforcement .left,
+  .section-genetic-genealogy .left {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 100%;
+  }
 }
 
 .left {

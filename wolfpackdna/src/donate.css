@@ -65,11 +65,17 @@
   background: #fff;
   font-size: 18px;
   color: rgba(0, 0, 0, 0.7);
-  font-weight: bold;
+  font-weight: normal;
   cursor: pointer;
+  transition: background 0.1s ease;
 }
 
 .amount-btn:hover {
+  background: #e5e4e7;
+}
+
+.amount-selected {
+  outline: 2px solid #70a1a6;
   background: #e5e4e7;
 }
 
@@ -86,9 +92,9 @@
   font-family: font;
   font-size: 17.5px;
   color: rgba(0, 0, 0, 0.7);
-  font-weight: bold;
+  font-weight: normal;
   cursor: pointer;
-  transition: background 0.15s ease;
+  transition: background 0.1s ease;
 }
 
 .donate-submit-btn:hover {

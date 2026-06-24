@@ -107,3 +107,34 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+/* Custom Scrollbar */
+:root {
+  --scrollbar-width: 6px;
+  --scrollbar-thumb: rgba(112, 161, 166, 0.5);
+  --scrollbar-thumb-hover: rgba(93, 139, 144, 0.7);
+}
+
+::-webkit-scrollbar {
+  width: var(--scrollbar-width);
+  height: var(--scrollbar-width);
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 3px;
+  transition: background 0.1s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+}

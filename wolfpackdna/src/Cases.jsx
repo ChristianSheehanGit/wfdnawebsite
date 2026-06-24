@@ -151,7 +151,7 @@ const Cases = () => {
         ))}
       </div>
 
-      <Modal isOpen={!!activeCase} onClose={() => setActiveCase(null)}>
+      <Modal isOpen={!!activeCase} onClose={() => setActiveCase(null)} showDonate>
         {activeCase && (
           <>
             <p style={{ fontWeight: "bold" }}>{activeCase.title}</p>

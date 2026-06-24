@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import Navbar from "./components/navbar.jsx";
 import Footer from "./components/footer.jsx";
 import "./donate.css";
 
 const Donate = () => {
+  const [selectedOneTime, setSelectedOneTime] = useState(null);
+  const [selectedRecurring, setSelectedRecurring] = useState(null);
+
   return (
     <div>
       <Navbar />
@@ -21,12 +24,12 @@ const Donate = () => {
               family reunification efforts.
             </p>
             <div className="donate-amounts">
-              <button className="amount-btn">$25</button>
-              <button className="amount-btn">$50</button>
-              <button className="amount-btn">$100</button>
-              <button className="amount-btn amount-custom">Custom</button>
-            </div>
-            <button className="donate-submit-btn">Donate Now</button>
+               <button className={`amount-btn ${selectedOneTime === "$25" ? "amount-selected" : ""}`} onClick={() => setSelectedOneTime("$25")}>$25</button>
+               <button className={`amount-btn ${selectedOneTime === "$50" ? "amount-selected" : ""}`} onClick={() => setSelectedOneTime("$50")}>$50</button>
+               <button className={`amount-btn ${selectedOneTime === "$100" ? "amount-selected" : ""}`} onClick={() => setSelectedOneTime("$100")}>$100</button>
+               <button className={`amount-btn amount-custom ${selectedOneTime === "Custom" ? "amount-selected" : ""}`} onClick={() => setSelectedOneTime("Custom")}>Custom</button>
+             </div>
+             <button className="donate-submit-btn">Donate Now</button>
           </div>
 
           {/* Monthly Donation */}
@@ -37,12 +40,12 @@ const Donate = () => {
               that fuels our work year-round.
             </p>
             <div className="donate-amounts">
-              <button className="amount-btn">$10/mo</button>
-              <button className="amount-btn">$25/mo</button>
-              <button className="amount-btn">$50/mo</button>
-              <button className="amount-btn amount-custom">Custom</button>
-            </div>
-            <button className="donate-submit-btn">Subscribe Monthly</button>
+               <button className={`amount-btn ${selectedRecurring === "$10/mo" ? "amount-selected" : ""}`} onClick={() => setSelectedRecurring("$10/mo")}>$10/mo</button>
+               <button className={`amount-btn ${selectedRecurring === "$25/mo" ? "amount-selected" : ""}`} onClick={() => setSelectedRecurring("$25/mo")}>$25/mo</button>
+               <button className={`amount-btn ${selectedRecurring === "$50/mo" ? "amount-selected" : ""}`} onClick={() => setSelectedRecurring("$50/mo")}>$50/mo</button>
+               <button className={`amount-btn amount-custom ${selectedRecurring === "Custom" ? "amount-selected" : ""}`} onClick={() => setSelectedRecurring("Custom")}>Custom</button>
+             </div>
+             <button className="donate-submit-btn">Subscribe Monthly</button>
           </div>
         </div>
       </div>

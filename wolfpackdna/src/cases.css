@@ -20,7 +20,7 @@
   color: rgba(0, 0, 0, 0.7);
   padding: 8px 16px;
   cursor: pointer;
-  transition: background 0.15s ease;
+  transition: background 0.1s ease;
 }
 
 .cases-filters button:hover {
@@ -29,7 +29,7 @@
 
 .cases-filter-active {
   background: rgba(196, 196, 196, 0.5) !important;
-  font-weight: bold;
+  font-weight: normal;
 }
 
 .cases-sort {
@@ -60,7 +60,7 @@
   align-items: center;
   gap: 8px;
   white-space: nowrap;
-  transition: background 0.15s ease;
+  transition: background 0.1s ease;
 }
 
 .sort-custom-btn:hover {
@@ -69,7 +69,7 @@
 
 .sort-chevron {
   display: inline-block;
-  transition: transform 0.15s;
+  transition: transform 0.1s;
   font-size: 30px;
   line-height: 1;
 }
@@ -78,7 +78,7 @@
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
-  background: #b8b8b8;
+  background: #d6d6d6;
   overflow: hidden;
   min-width: 100%;
   z-index: 10;
@@ -92,7 +92,7 @@
   white-space: nowrap;
   font-size: 17.5px;
   cursor: pointer;
-  transition: background 0.15s ease;
+  transition: background 0.1s ease;
 }
 
 .sort-dropdown-item:hover {
@@ -117,7 +117,7 @@
   padding: 8px 16px;
   width: 280px;
   outline: none;
-  transition: background 0.15s ease;
+  transition: background 0.1s ease;
 }
 
 .cases-search-input:focus {

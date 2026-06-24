@@ -27,12 +27,12 @@
   padding: 8px 16px;
   background: #e8e8e8;
   margin-left: -1px;
-  transition: background 0.2s, color 0.2s;
+  transition: background 0.1s, color 0.1s;
 }
 
 .inquiry-step-indicator.active {
   color: #fff;
-  font-weight: bold;
+  font-weight: normal;
   background: #70a1a6;
 }
 
@@ -101,7 +101,7 @@
   color: rgba(0, 0, 0, 0.7);
   border: none;
   outline: 1px solid rgba(0, 0, 0, 0.3);
-  transition: outline-color 0.15s;
+  transition: outline-color 0.1s;
 }
 
 .inquiry-input:focus {
@@ -117,7 +117,7 @@
   border: none;
   outline: 1px solid rgba(0, 0, 0, 0.3);
   cursor: pointer;
-  transition: outline-color 0.15s;
+  transition: outline-color 0.1s;
 }
 
 .inquiry-select:focus {

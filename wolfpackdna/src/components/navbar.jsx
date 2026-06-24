@@ -1,11 +1,17 @@
 import { useState, useEffect, useRef } from "react";
 import "./navbar.css";
 import { HashLink } from "react-router-hash-link";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 
 const Navbar = ({ className = "", showNav }) => {
   const [isOpen, setIsOpen] = useState(false);
   const navRef = useRef(null);
+  const location = useLocation();
+
+  const isTeamPage = location.pathname === "/team";
+  const isHomeAbout = location.pathname === "/" && location.hash === "#about";
+  const isAboutActive = isTeamPage || isHomeAbout;
+  const isInquiryPage = location.pathname.startsWith("/inquiry/");
 
   useEffect(() => {
     if (!showNav) setIsOpen(false);
@@ -36,9 +42,22 @@ const Navbar = ({ className = "", showNav }) => {
       </button>
 
       <div className={`nav-links ${isOpen ? "open" : ""}`}>
-        <NavLink to="/" end onClick={() => setIsOpen(false)}>Home</NavLink>
-        <HashLink smooth to="/#about" onClick={() => setIsOpen(false)}>About</HashLink>
-        <NavLink to="/services" onClick={() => setIsOpen(false)}>Our Services</NavLink>
+        <NavLink to="/" end onClick={() => setIsOpen(false)} className={({ isActive }) => (isActive && !isAboutActive) ? "active" : ""}>Home</NavLink>
+        <HashLink
+          smooth
+          to="/#about"
+          onClick={() => setIsOpen(false)}
+          className={isAboutActive ? "active" : ""}
+        >
+          About
+        </HashLink>
+        <NavLink
+          to="/services"
+          onClick={() => setIsOpen(false)}
+          className={({ isActive }) => (isActive || isInquiryPage) ? "active" : ""}
+        >
+          Our Services
+        </NavLink>
         <NavLink to="/cases" onClick={() => setIsOpen(false)}>Cases</NavLink>
         <NavLink to="/donate" onClick={() => setIsOpen(false)}>Donate</NavLink>
       </div>

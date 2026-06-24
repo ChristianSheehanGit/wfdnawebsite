@@ -1,14 +1,27 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
+import { useLocation } from "react-router-dom";
 import Navbar from "./components/navbar.jsx";
 import Footer from "./components/footer.jsx";
 import Card from "./components/card.jsx";
+import Modal from "./components/modal.jsx";
 import Logo from "./assets/logo.png";
 import BannerImg from "./assets/banner.jpg";
 import "./App.css";
 
+const recentCasesList = [
+  { id: 1, title: "John Doe Identification", date: "March 2025", category: "law-enforcement", description: "Placeholder case description. Unidentified remains case resolved through forensic genetic genealogy. DNA analysis and family tree construction led to a positive identification after 15 years." },
+  { id: 2, title: "Jane Smith Family Reunification", date: "January 2025", category: "genetic-genealogy", description: "Placeholder case description. Adoptee searching for biological family. DNA testing and genealogical research successfully identified birth parents and facilitated reunification." },
+  { id: 3, title: "Unknown Remains 2024-017", date: "November 2024", category: "law-enforcement", description: "Placeholder case description. John Doe found in 2019. Forensic genealogy analysis provided investigative leads that resulted in identification and closure for the family." },
+  { id: 4, title: "Cold Case Homicide 2012", date: "August 2024", category: "law-enforcement", description: "Placeholder case description. Law enforcement cold case reopened. DNA evidence reanalyzed and genealogical databases used to identify a suspect previously unknown to investigators." },
+  { id: 5, title: "Biological Sibling Search", date: "June 2024", category: "genetic-genealogy", description: "Placeholder case description. Individual seeking to identify biological siblings. DNA analysis and genealogical records matched with half-siblings, leading to new family connections." },
+  { id: 6, title: "Unidentified Juvenile 2018", date: "April 2024", category: "law-enforcement", description: "Placeholder case description. Remains of a juvenile found in 2018. Genetic genealogy investigation identified the individual and provided answers to the family after years of searching." },
+];
+
 const Home = () => {
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const [activeCase, setActiveCase] = useState(null);
+  const location = useLocation();
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -19,6 +32,13 @@ const Home = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    if (location.hash === "#about") {
+      const aboutEl = document.getElementById("about");
+      if (aboutEl) aboutEl.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [location.hash]);
 
   return (
     <div>
@@ -51,13 +71,13 @@ const Home = () => {
             {open && (
               <div className="dropdown">
                 <a href="/#/inquiry/law-enforcement" className="dropdown-item"
-                  style={{ transition: "background 0.15s ease" }}
+                  style={{ transition: "background 0.1s ease" }}
                   onMouseEnter={e => e.currentTarget.style.background = "#527478"}
                   onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
                   Law Enforcement
                 </a>
-                <a href="/#/inquiry/genetic-genealogy" className="dropdown-item"
-                  style={{ transition: "background 0.15s ease" }}
+          <a href="/#/inquiry/genetic-genealogy" className="dropdown-item"
+                  style={{ transition: "background 0.1s ease" }}
                   onMouseEnter={e => e.currentTarget.style.background = "#527478"}
                   onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
                   Genetic Genealogy
@@ -71,30 +91,19 @@ const Home = () => {
       {/* Recent Cases */}
       <div className="section-recent-cases">
         <div className="recent-cases-header">
-          <h2 style={{fontFamily:"font"}} className="recent-cases-title">Recent Cases</h2>
+          <h2 style={{fontFamily:"font", fontWeight: "bold"}} className="recent-cases-title">Recent Cases</h2>
           <a href="/#/cases" className="see-all-link">See All Cases →</a>
         </div>
         <div className="recent-cases-grid">
-          <Card
-            image={`https://placehold.co/300x300/eee/999?text=Case+1`}
-            title="John Doe Identification"
-            subtitle="March 2025"
-          />
-          <Card
-            image={`https://placehold.co/300x300/eee/999?text=Case+2`}
-            title="Jane Smith Family Reunification"
-            subtitle="January 2025"
-          />
-          <Card
-            image={`https://placehold.co/300x300/eee/999?text=Case+3`}
-            title="Unknown Remains 2024-017"
-            subtitle="November 2024"
-          />
-          <Card
-            image={`https://placehold.co/300x300/eee/999?text=Case+4`}
-            title="Cold Case Homicide 2012"
-            subtitle="August 2024"
-          />
+          {recentCasesList.slice(0, 4).map((c) => (
+            <Card
+              key={c.id}
+              image={`https://placehold.co/300x300/eee/999?text=Case+${c.id}`}
+              title={c.title}
+              subtitle={c.date}
+              onClick={() => setActiveCase(c)}
+            />
+          ))}
         </div>
       </div>
 
@@ -114,6 +123,17 @@ const Home = () => {
           <div className="about-img-placeholder" />
         </div>
       </div>
+
+      <Modal isOpen={!!activeCase} onClose={() => setActiveCase(null)} showDonate>
+        {activeCase && (
+          <>
+            <p style={{ fontWeight: "bold" }}>{activeCase.title}</p>
+            <p style={{ marginTop: "0px" }}>{activeCase.date}</p>
+            <p>{activeCase.category === "law-enforcement" ? "Law Enforcement" : "Genetic Genealogy"}</p>
+            <p>{activeCase.description}</p>
+          </>
+        )}
+      </Modal>
 
       <Footer />
     </div>
