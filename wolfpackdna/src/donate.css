@@ -53,7 +53,7 @@
   flex-wrap: wrap;
   gap: 8px;
   justify-content: center;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   width: 100%;
 }
 
@@ -81,6 +81,31 @@
 
 .amount-custom {
   flex: 1 1 80px;
+}
+
+.custom-amount-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  outline: 1px solid rgba(0, 0, 0, 0.3);
+  font-family: font;
+  font-size: 17.5px;
+  color: rgba(0, 0, 0, 0.7);
+  background: #fff;
+  box-sizing: border-box;
+  margin-bottom: 12px;
+  transition: outline-color 0.1s;
+  -moz-appearance: textfield;
+}
+
+.custom-amount-input::-webkit-inner-spin-button,
+.custom-amount-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.custom-amount-input:focus {
+  outline: 2px solid #70a1a6;
 }
 
 /* ───────────── Submit Buttons ───────────── */

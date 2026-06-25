@@ -5,7 +5,6 @@ import Home from "./Home.jsx";
 import Services from "./Services.jsx";
 import Team from "./Team.jsx";
 import Cases from "./Cases.jsx";
-import Donate from "./Donate.jsx";
 import Inquiry from "./Inquiry.jsx";
 
 function ScrollToTop() {
@@ -25,7 +24,6 @@ function PageTitle() {
       "/team": "Meet the Team",
       "/services": "Our Services",
       "/cases": "Cases",
-      "/donate": "Make a Donation",
     };
     const defaultTitle = "Wolf Pack DNA";
     if (pathname.startsWith("/inquiry/")) {
@@ -48,14 +46,13 @@ function App() {
       <Router>
         <ScrollToTop />
         <PageTitle />
-        <Routes>
-          <Route path="/" element={<Home/>} />
-          <Route path="/team" element={<Team/>} />
-          <Route path="/services" element={<Services/>} />
-          <Route path="/cases" element={<Cases/>} />
-          <Route path="/donate" element={<Donate/>} />
-          <Route path="/inquiry/:type" element={<Inquiry/>} />
-        </Routes>
+      <Routes>
+        <Route path="/" element={<Home/>} />
+        <Route path="/team" element={<Team/>} />
+        <Route path="/services" element={<Services/>} />
+        <Route path="/cases" element={<Cases/>} />
+        <Route path="/inquiry/:type" element={<Inquiry/>} />
+      </Routes>
       </Router>
     </div>
   );

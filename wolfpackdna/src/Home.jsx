@@ -7,6 +7,7 @@ import Modal from "./components/modal.jsx";
 import Logo from "./assets/logo.png";
 import BannerImg from "./assets/banner.jpg";
 import "./App.css";
+import "./donate.css";
 
 const recentCasesList = [
   { id: 1, title: "John Doe Identification", date: "March 2025", category: "law-enforcement", description: "Placeholder case description. Unidentified remains case resolved through forensic genetic genealogy. DNA analysis and family tree construction led to a positive identification after 15 years." },
@@ -21,7 +22,17 @@ const Home = () => {
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
   const [activeCase, setActiveCase] = useState(null);
+  const [selectedOneTime, setSelectedOneTime] = useState(null);
+  const [selectedRecurring, setSelectedRecurring] = useState(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const location = useLocation();
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 768px)");
+    const handler = (e) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -37,6 +48,13 @@ const Home = () => {
     if (location.hash === "#about") {
       const aboutEl = document.getElementById("about");
       if (aboutEl) aboutEl.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [location.hash]);
+
+  useEffect(() => {
+    if (location.hash === "#donate") {
+      const donateEl = document.getElementById("donate");
+      if (donateEl) donateEl.scrollIntoView({ behavior: "smooth" });
     }
   }, [location.hash]);
 
@@ -95,13 +113,14 @@ const Home = () => {
           <a href="/#/cases" className="see-all-link">See All Cases →</a>
         </div>
         <div className="recent-cases-grid">
-          {recentCasesList.slice(0, 4).map((c) => (
+          {recentCasesList.slice(0, isMobile ? 3 : 4).map((c, idx) => (
             <Card
               key={c.id}
               image={`https://placehold.co/300x300/eee/999?text=Case+${c.id}`}
               title={c.title}
               subtitle={c.date}
               onClick={() => setActiveCase(c)}
+              live={idx < 2}
             />
           ))}
         </div>
@@ -124,7 +143,7 @@ const Home = () => {
         </div>
       </div>
 
-      <Modal isOpen={!!activeCase} onClose={() => setActiveCase(null)} showDonate>
+      <Modal isOpen={!!activeCase} onClose={() => setActiveCase(null)} showDonate={activeCase && recentCasesList.indexOf(activeCase) < 2}>
         {activeCase && (
           <>
             <p style={{ fontWeight: "bold" }}>{activeCase.title}</p>
@@ -134,6 +153,47 @@ const Home = () => {
           </>
         )}
       </Modal>
+
+      {/* Donate */}
+      <div id="donate" className="donate-section">
+        <h2 style={{"fontFamily": "font"}}>Make a Donation</h2>
+
+        <div className="donate-cards">
+          {/* One-Time Donation */}
+          <div className="donate-card">
+            <h3>One-Time</h3>
+            <p>
+              Make a single donation to support our ongoing investigations and
+              family reunification efforts.
+            </p>
+            <div className="donate-amounts">
+               <button className={`amount-btn ${selectedOneTime === "$25" ? "amount-selected" : ""}`} onClick={() => setSelectedOneTime("$25")}>$25</button>
+               <button className={`amount-btn ${selectedOneTime === "$50" ? "amount-selected" : ""}`} onClick={() => setSelectedOneTime("$50")}>$50</button>
+               <button className={`amount-btn ${selectedOneTime === "$100" ? "amount-selected" : ""}`} onClick={() => setSelectedOneTime("$100")}>$100</button>
+               <button className={`amount-btn amount-custom ${selectedOneTime === "Custom" ? "amount-selected" : ""}`} onClick={() => setSelectedOneTime("Custom")}>Custom</button>
+             </div>
+             {selectedOneTime === "Custom" && <input type="number" className="custom-amount-input" placeholder="Enter amount" min="1" onKeyDown={(e) => { if (!/[0-9]/.test(e.key) && e.key !== "Backspace" && e.key !== "Tab" && e.key !== "Delete" && e.key !== "ArrowLeft" && e.key !== "ArrowRight" && e.key !== "Home" && e.key !== "End") e.preventDefault(); }} />}
+             <button className="donate-submit-btn">Donate Now</button>
+          </div>
+
+          {/* Monthly Donation */}
+          <div className="donate-card">
+            <h3>Recurring</h3>
+            <p>
+              Become a monthly sustainer and provide reliable, recurring support
+              that fuels our work year-round.
+            </p>
+            <div className="donate-amounts">
+               <button className={`amount-btn ${selectedRecurring === "$10/mo" ? "amount-selected" : ""}`} onClick={() => setSelectedRecurring("$10/mo")}>$10/mo</button>
+               <button className={`amount-btn ${selectedRecurring === "$25/mo" ? "amount-selected" : ""}`} onClick={() => setSelectedRecurring("$25/mo")}>$25/mo</button>
+               <button className={`amount-btn ${selectedRecurring === "$50/mo" ? "amount-selected" : ""}`} onClick={() => setSelectedRecurring("$50/mo")}>$50/mo</button>
+               <button className={`amount-btn amount-custom ${selectedRecurring === "Custom" ? "amount-selected" : ""}`} onClick={() => setSelectedRecurring("Custom")}>Custom</button>
+             </div>
+             {selectedRecurring === "Custom" && <input type="number" className="custom-amount-input" placeholder="Enter amount" min="1" onKeyDown={(e) => { if (!/[0-9]/.test(e.key) && e.key !== "Backspace" && e.key !== "Tab" && e.key !== "Delete" && e.key !== "ArrowLeft" && e.key !== "ArrowRight" && e.key !== "Home" && e.key !== "End") e.preventDefault(); }} />}
+             <button className="donate-submit-btn">Subscribe Monthly</button>
+          </div>
+        </div>
+      </div>
 
       <Footer />
     </div>

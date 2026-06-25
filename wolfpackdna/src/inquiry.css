@@ -1,7 +1,7 @@
 .inquiry-container {
   max-width: 700px;
   margin: 0 auto;
-  padding: 40px 20px 60px;
+  padding: 25px 20px 25px;
 }
 
 .inquiry-title {
@@ -31,7 +31,7 @@
 }
 
 .inquiry-step-indicator.active {
-  color: #fff;
+  color: rgba(0,0,0,0.7);
   font-weight: normal;
   background: #70a1a6;
 }
@@ -54,7 +54,7 @@
 
 .inquiry-step-indicator.active .inquiry-step-number {
   background: rgba(255, 255, 255, 0.3);
-  color: #fff;
+  color: rgba(0,0,0,0.7);
 }
 
 .inquiry-step-indicator.completed .inquiry-step-number {
@@ -75,11 +75,9 @@
 }
 
 .inquiry-step-title {
-  font-size: 20px;
+  font-size: 17.5px;
   margin: 0 0 12px;
   color: rgba(0, 0, 0, 0.7);
-  padding-bottom: 12px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
 }
 
 .inquiry-field {

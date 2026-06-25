@@ -96,7 +96,7 @@
 }
 
 .sort-dropdown-item:hover {
-  background: #a3a3a3;
+  background: rgba(180, 180, 180, 0.5);
 }
 
 .cases-search-wrapper {

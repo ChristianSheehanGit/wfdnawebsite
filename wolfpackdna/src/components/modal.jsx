@@ -36,6 +36,7 @@ const Modal = ({ isOpen, onClose, children, showDonate = false, onDonateClose })
               <button className={`modal-donate-amount ${selectedDonateAmount === "$100" ? "amount-selected" : ""}`} onClick={() => setSelectedDonateAmount("$100")}>$100</button>
               <button className={`modal-donate-amount modal-donate-custom ${selectedDonateAmount === "Custom" ? "amount-selected" : ""}`} onClick={() => setSelectedDonateAmount("Custom")}>Custom</button>
             </div>
+            {selectedDonateAmount === "Custom" && <input type="number" className="custom-amount-input" placeholder="Enter amount" min="1" onKeyDown={(e) => { if (!/[0-9]/.test(e.key) && e.key !== "Backspace" && e.key !== "Tab" && e.key !== "Delete" && e.key !== "ArrowLeft" && e.key !== "ArrowRight" && e.key !== "Home" && e.key !== "End") e.preventDefault(); }} />}
             <button className="modal-donate-submit">Donate Now</button>
           </div>
         )}

@@ -15,6 +15,23 @@
   width: 100%;
   aspect-ratio: 1 / 1;
   overflow: hidden;
+  position: relative;
+}
+
+.card-live-indicator {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #d32f2f;
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 3px 8px;
+  border-radius: 0;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  gap: 3px;
 }
 
 .card-image {

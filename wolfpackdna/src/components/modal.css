@@ -30,13 +30,13 @@
   cursor: pointer;
   line-height: 1;
   transition: opacity 0.1s;
+  color: black;
 }
 
 .modal-donate {
   margin: 16px auto 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
   max-width: 320px;
   background: rgba(216, 216, 216, 0.5);
   padding: 16px;
@@ -46,12 +46,14 @@
   font-size: 17.5px;
   font-weight: bold;
   color: rgba(0, 0, 0, 0.7);
+  margin-bottom: 12px;
 }
 
 .modal-donate-amounts {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+  margin-bottom: 12px;
 }
 
 .modal-donate-amount {
@@ -99,4 +101,30 @@
 
 .modal-donate-submit:hover {
   background: #5d8b90;
+}
+
+.custom-amount-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  outline: 1px solid rgba(0, 0, 0, 0.3);
+  font-family: font;
+  font-size: 17.5px;
+  color: rgba(0, 0, 0, 0.7);
+  background: #fff;
+  box-sizing: border-box;
+  margin-bottom: 8px;
+  transition: outline-color 0.1s;
+  -moz-appearance: textfield;
+  margin-bottom: 12px;
+}
+
+.custom-amount-input::-webkit-inner-spin-button,
+.custom-amount-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.custom-amount-input:focus {
+  outline: 2px solid #70a1a6;
 }
