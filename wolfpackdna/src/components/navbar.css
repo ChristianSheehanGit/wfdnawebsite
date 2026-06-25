@@ -48,6 +48,14 @@ nav {
   text-underline-offset: 4px;
 }
 
+/* ===== Mobile page title (hidden on desktop) ===== */
+.mobile-page-title {
+  display: none;
+  font-size: 17.5px;
+  color: black;
+  margin-right: auto;
+}
+
 /* ===== Hamburger (hidden on desktop) ===== */
 .hamburger {
   display: none;
@@ -76,6 +84,11 @@ nav {
 }
 /* ===== Mobile styles (≤ 768px) ===== */
 @media (max-width: 768px) {
+  /* Show page title */
+  .mobile-page-title {
+    display: block;
+  }
+
   /* Show hamburger */
   .hamburger {
     display: block;

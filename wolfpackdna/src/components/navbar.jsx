@@ -14,6 +14,16 @@ const Navbar = () => {
   const isDonateActive = isHomeDonate;
   const isInquiryPage = location.pathname.startsWith("/inquiry/");
 
+  const getPageTitle = () => {
+    if (location.pathname === "/" && !location.hash) return "Home";
+    if (location.pathname === "/" && location.hash === "#about") return "About";
+    if (location.pathname === "/" && location.hash === "#donate") return "Donate";
+    if (isTeamPage) return "Team";
+    if (location.pathname === "/services" || isInquiryPage) return "Our Services";
+    if (location.pathname === "/cases") return "Cases";
+    return "";
+  };
+
   useEffect(() => {
     setIsOpen(false);
   }, [location.pathname]);
@@ -39,6 +49,8 @@ const Navbar = () => {
 
   return (
     <nav className="navbar">
+      <span className="mobile-page-title">{getPageTitle()}</span>
+
       <button
         className={`hamburger ${isOpen ? "open" : ""}`}
         onClick={() => setIsOpen(!isOpen)}
