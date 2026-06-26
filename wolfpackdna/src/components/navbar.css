@@ -4,7 +4,7 @@ nav {
   align-items: center;
   gap: 1.5rem;
 
-  background-color: rgb(112, 161, 166, 0.7);
+  background-color: rgb(86, 158, 165, 0.7);
   backdrop-filter: blur(5px);
 
   padding: 10px 24px;
@@ -41,11 +41,31 @@ nav {
   opacity: 1;
 }
 
+/* Nav link hover underline animation */
+.nav-links a {
+  position: relative;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  width: 0;
+  height: 1px;
+  background: #000;
+  transition: width 0.1s ease, left 0.1s ease;
+}
+
+.nav-links a:hover::after,
+.nav-links a.active::after {
+  width: 100%;
+  left: 0;
+}
+
 /* Active link styles */
 .nav-links a.active {
   opacity: 1;
-  text-decoration: underline;
-  text-underline-offset: 4px;
 }
 
 /* ===== Mobile page title (hidden on desktop) ===== */
@@ -53,6 +73,7 @@ nav {
   display: none;
   font-size: 17.5px;
   color: black;
+  
   margin-right: auto;
 }
 
@@ -76,7 +97,7 @@ nav {
 }
 @media (max-width: 1030px) {
   nav {
-    background-color: rgb(112, 161, 166, 0.7);
+    background-color: rgb(86, 158, 165, 0.7);
     backdrop-filter: blur(5px);
     padding: 12px 24px;
     gap: 0;
@@ -104,7 +125,7 @@ nav {
     right: -100%;
     width: 250px;
     height: 100vh;
-    background: rgba(112, 161, 166, 0.95);
+    background: rgba(86, 158, 165, 0.95);
     backdrop-filter: blur(5px);
     display: flex;
     flex-direction: column;
@@ -138,9 +159,9 @@ nav {
   }
 
   nav {
-    background-color: rgb(112, 161, 166, 0.7);
+    background-color: rgb(86, 158, 165, 0.7);
     backdrop-filter: blur(5px);
-    padding: 13px 24px;
+    padding: 12px 24px;
     gap: 0;
   }
 }

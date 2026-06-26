@@ -23,6 +23,10 @@
   transition: background 0.1s ease;
 }
 
+.cases-filters button:focus-visible {
+  box-shadow: 0 0 0 2px #569ea5;
+}
+
 .cases-filters button:hover {
   background: rgba(196, 196, 196, 0.5);
 }
@@ -30,6 +34,7 @@
 .cases-filter-active {
   background: rgba(196, 196, 196, 0.5) !important;
   font-weight: normal;
+  box-shadow: 0 0 0 2px #569ea5;
 }
 
 .cases-sort {
@@ -122,6 +127,7 @@
 
 .cases-search-input:focus {
   background: rgba(196, 196, 196, 0.5);
+  box-shadow: 0 0 0 2px #569ea5;
 }
 
 .cases-search-input::placeholder {

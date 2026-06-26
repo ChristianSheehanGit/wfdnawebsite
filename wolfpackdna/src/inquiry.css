@@ -33,7 +33,7 @@
 .inquiry-step-indicator.active {
   color: rgba(0,0,0,0.7);
   font-weight: normal;
-  background: #70a1a6;
+  background: #569ea5;
 }
 
 .inquiry-step-indicator.completed {
@@ -103,7 +103,8 @@
 }
 
 .inquiry-input:focus {
-  outline: 2px solid #70a1a6;
+  outline: none;
+  box-shadow: 0 0 0 2px #569ea5, 0 0 0 4px rgba(86, 158, 165, 0.15);
 }
 
 .inquiry-select {
@@ -119,7 +120,8 @@
 }
 
 .inquiry-select:focus {
-  outline: 2px solid #70a1a6;
+  outline: none;
+  box-shadow: 0 0 0 2px #569ea5, 0 0 0 4px rgba(86, 158, 165, 0.15);
 }
 
 .inquiry-buttons {

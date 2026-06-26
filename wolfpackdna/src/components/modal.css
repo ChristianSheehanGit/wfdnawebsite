@@ -10,6 +10,7 @@
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  backdrop-filter: blur(2px);
 }
 
 .modal-content {
@@ -79,7 +80,7 @@
 }
 
 .amount-selected {
-  outline: 2px solid #70a1a6;
+  outline: 2px solid #569ea5;
 }
 
 .modal-donate-custom {
@@ -90,17 +91,22 @@
   width: 100%;
   padding: 9px 18px;
   border: none;
-  background: #70a1a6;
+  background: #569ea5;
   font-family: font;
   font-size: 17.5px;
   font-weight: normal;
   color: rgba(0, 0, 0, 0.7);
   cursor: pointer;
-  transition: background 0.1s ease;
+  transition: background 0.15s ease, transform 0.15s ease;
 }
 
 .modal-donate-submit:hover {
-  background: #5d8b90;
+  background: #48868c;
+  transform: translateY(-1px);
+}
+
+.modal-donate-submit:active {
+  transform: scale(0.98);
 }
 
 .custom-amount-input {
@@ -126,5 +132,6 @@
 }
 
 .custom-amount-input:focus {
-  outline: 2px solid #70a1a6;
+  outline: none;
+  box-shadow: 0 0 0 2px #569ea5, 0 0 0 4px rgba(86, 158, 165, 0.15);
 }
