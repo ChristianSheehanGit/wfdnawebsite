@@ -90,13 +90,13 @@ const Home = () => {
               <div className="dropdown">
                 <a href="/#/inquiry/law-enforcement" className="dropdown-item"
                   style={{ transition: "background 0.1s ease" }}
-                  onMouseEnter={e => e.currentTarget.style.background = "#527478"}
+                  onMouseEnter={e => e.currentTarget.style.background = "#3f757b"}
                   onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
                   Law Enforcement
                 </a>
           <a href="/#/inquiry/genetic-genealogy" className="dropdown-item"
                   style={{ transition: "background 0.1s ease" }}
-                  onMouseEnter={e => e.currentTarget.style.background = "#527478"}
+                  onMouseEnter={e => e.currentTarget.style.background = "#3f757b"}
                   onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
                   Genetic Genealogy
                 </a>
