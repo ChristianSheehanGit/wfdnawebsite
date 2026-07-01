@@ -428,7 +428,8 @@ p {
     width: 100% !important;
   }
 
-  .about-img-placeholder {
+  .about-img-placeholder,
+  .about-img {
     width: 100%;
   }
 }
@@ -485,7 +486,9 @@ p {
   }
 
   .section-law-enforcement .about-img-placeholder,
-  .section-genetic-genealogy .about-img-placeholder {
+  .section-genetic-genealogy .about-img-placeholder,
+  .section-law-enforcement .about-img,
+  .section-genetic-genealogy .about-img {
     width: 85%;
   }
 
@@ -524,6 +527,13 @@ p {
   width: 70%;
   aspect-ratio: 4 / 3;
   background: #ccc;
+  box-shadow: 8px 8px 0 0 rgba(63, 149, 156);
+}
+
+.about-img {
+  width: 70%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
   box-shadow: 8px 8px 0 0 rgba(63, 149, 156);
 }
 

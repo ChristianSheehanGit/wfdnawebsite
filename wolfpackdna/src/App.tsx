@@ -6,6 +6,7 @@ import Services from "./Services.jsx";
 import Team from "./Team.jsx";
 import Cases from "./Cases.jsx";
 import Inquiry from "./Inquiry.jsx";
+import Admin from "./Admin.jsx";
 
 function ScrollToTop() {
   const { pathname, hash } = useLocation();
@@ -24,6 +25,7 @@ function PageTitle() {
       "/team": "Meet the Team",
       "/services": "Our Services",
       "/cases": "Cases",
+      "/admin": "Admin Panel",
     };
     const defaultTitle = "Wolf Pack DNA";
     if (pathname.startsWith("/inquiry/")) {
@@ -52,6 +54,7 @@ function App() {
         <Route path="/services" element={<Services/>} />
         <Route path="/cases" element={<Cases/>} />
         <Route path="/inquiry/:type" element={<Inquiry/>} />
+        <Route path="/admin" element={<Admin/>} />
       </Routes>
       </Router>
     </div>

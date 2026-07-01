@@ -4,8 +4,7 @@ import Navbar from "./components/navbar.jsx";
 import Footer from "./components/footer.jsx";
 import Card from "./components/card.jsx";
 import Modal from "./components/modal.jsx";
-import Logo from "./assets/logo.png";
-import BannerImg from "./assets/banner.jpg";
+import { useImages } from "./ImageContext.jsx";
 import "./App.css";
 import "./donate.css";
 
@@ -19,6 +18,7 @@ const recentCasesList = [
 ];
 
 const Home = () => {
+  const { getImage } = useImages();
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
   const [activeCase, setActiveCase] = useState(null);
@@ -64,12 +64,12 @@ const Home = () => {
       <div style={{ height: "46.1px" }}></div>
 
       {/* Banner */}
-      <div className="banner" style={{ backgroundImage: `url(${BannerImg})` }}>
+      <div className="banner" style={{ backgroundImage: `url(${getImage("banner")})` }}>
         <div className="banner-overlay" />
 
         {/* LEFT half — logo */}
         <div className="banner-left">
-          <img style={{ width: "300px" }} src={Logo} />
+          <img style={{ width: "300px" }} src={getImage("logo")} />
         </div>
 
         {/* RIGHT half — text, button */}
@@ -137,9 +137,13 @@ const Home = () => {
           </button>
         </div>
 
-        {/* RIGHT — placeholder image */}
+        {/* RIGHT — about image */}
         <div className="right">
-          <div className="about-img-placeholder" />
+          {getImage("about") ? (
+            <img src={getImage("about")} alt="About Us" className="about-img" />
+          ) : (
+            <div className="about-img-placeholder" />
+          )}
         </div>
       </div>
 
