@@ -8,7 +8,7 @@ p {
 }
 
 .counter {
-  font-size: 16px;
+  font-size: 17.5px;
   padding: 5px 10px;
   border-radius: 5px;
   color: var(--accent);
@@ -139,7 +139,7 @@ p {
 
   a {
     color: var(--text-h);
-    font-size: 16px;
+    font-size: 17.5px;
     border-radius: 6px;
     background: var(--social-bg);
     display: flex;

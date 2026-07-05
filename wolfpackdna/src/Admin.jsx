@@ -83,6 +83,7 @@ const Admin = () => {
   const [showAddModal, setShowAddModal] = useState(null); // "case" | "team" | null
   const [editModal, setEditModal] = useState(null); // { type: "case" | "team", item: {...} }
   const [deleteConfirm, setDeleteConfirm] = useState(null); // { type: "case" | "team", id, name }
+  const [previewItem, setPreviewItem] = useState(null); // { type: "case" | "team", item: {...} }
 
   // Edit modal fields
   const [editTitle, setEditTitle] = useState("");
@@ -151,6 +152,7 @@ const Admin = () => {
       setCaseDescription("");
       setCaseImage(null);
       setCaseImagePreview("");
+      setCaseImageName("");
       setCaseCategory("law-enforcement");
     } else {
       setTeamName("");
@@ -158,6 +160,7 @@ const Admin = () => {
       setTeamDescription("");
       setTeamImage(null);
       setTeamImagePreview("");
+      setTeamImageName("");
     }
   };
 
@@ -165,12 +168,27 @@ const Admin = () => {
     setShowAddModal(null);
   };
 
+  const [caseImageName, setCaseImageName] = useState("");
+  const [teamImageName, setTeamImageName] = useState("");
+  const [editImageName, setEditImageName] = useState("");
+
   const handleCaseImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
       setCaseImage(file);
       setCaseImagePreview(URL.createObjectURL(file));
+      setCaseImageName(file.name);
     }
+  };
+
+  const handleCaseImageReplace = () => {
+    document.getElementById("case-image-input").click();
+  };
+
+  const handleCaseImageDelete = () => {
+    setCaseImage(null);
+    setCaseImagePreview("");
+    setCaseImageName("");
   };
 
   const handleTeamImageUpload = (e) => {
@@ -178,7 +196,18 @@ const Admin = () => {
     if (file) {
       setTeamImage(file);
       setTeamImagePreview(URL.createObjectURL(file));
+      setTeamImageName(file.name);
     }
+  };
+
+  const handleTeamImageReplace = () => {
+    document.getElementById("team-image-input").click();
+  };
+
+  const handleTeamImageDelete = () => {
+    setTeamImage(null);
+    setTeamImagePreview("");
+    setTeamImageName("");
   };
 
   const handleAddCase = (e) => {
@@ -241,7 +270,17 @@ const Admin = () => {
     const file = e.target.files[0];
     if (file) {
       setEditImagePreview(URL.createObjectURL(file));
+      setEditImageName(file.name);
     }
+  };
+
+  const handleEditImageReplace = () => {
+    document.getElementById("edit-image-input").click();
+  };
+
+  const handleEditImageDelete = () => {
+    setEditImagePreview("");
+    setEditImageName("");
   };
 
   const handleSaveEdit = () => {
@@ -307,7 +346,7 @@ const Admin = () => {
             </button>
           </form>
         </div>
-        <Footer />
+      <Footer />
       </div>
     );
   }
@@ -426,6 +465,7 @@ const Admin = () => {
                         image={c.image}
                         title={c.title}
                         subtitle={c.date}
+                        onClick={() => setPreviewItem({ type: "case", item: c })}
                       />
                       <button className="admin-card-edit" onClick={() => openEditModal("case", c)} title="Edit case">
                         <i className="fas fa-pen"></i>
@@ -467,6 +507,7 @@ const Admin = () => {
                         image={m.image}
                         title={m.name}
                         subtitle={m.date}
+                        onClick={() => setPreviewItem({ type: "team", item: m })}
                       />
                       <button className="admin-card-edit" onClick={() => openEditModal("team", m)} title="Edit team member">
                         <i className="fas fa-pen"></i>
@@ -486,30 +527,42 @@ const Admin = () => {
                     <div key={slot.key} className="admin-image-slot">
                       <div className="admin-image-slot-preview">
                         {currentSrc ? (
-                          <img src={currentSrc} alt={slot.label} />
+                          <>
+                            <img src={currentSrc} alt={slot.label} />
+                            <div className="admin-image-slot-overlay">
+                              <span className="admin-image-slot-overlay-label">{slot.label}</span>
+                              <div className="admin-image-slot-overlay-buttons">
+                                <label className="admin-image-slot-overlay-btn admin-image-slot-overlay-replace" title="Replace image">
+                                  <i className="fas fa-upload"></i>
+                                  <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) => handleImageSlotUpload(slot.key, e)}
+                                    hidden
+                                  />
+                                </label>
+                                <button
+                                  className="admin-image-slot-overlay-btn admin-image-slot-overlay-delete"
+                                  onClick={() => setImageSlotDelete(slot)}
+                                  title="Delete image"
+                                >
+                                  <i className="fas fa-trash"></i>
+                                </button>
+                              </div>
+                            </div>
+                          </>
                         ) : (
-                          <div className="admin-image-slot-empty">
-                            <span>No image set</span>
-                          </div>
+                          <label className="admin-image-slot-empty">
+                            <i className="fas fa-cloud-upload-alt admin-image-slot-empty-icon"></i>
+                            <span className="admin-image-slot-empty-text">Click to upload {slot.label.toLowerCase()}</span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => handleImageSlotUpload(slot.key, e)}
+                              hidden
+                            />
+                          </label>
                         )}
-                      </div>
-                      <p className="admin-image-slot-label">{slot.label}</p>
-                      <div className="admin-image-slot-actions">
-                        <label className="admin-image-slot-replace">
-                          Replace
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => handleImageSlotUpload(slot.key, e)}
-                            hidden
-                          />
-                        </label>
-                        <button
-                          className="admin-image-slot-delete"
-                          onClick={() => setImageSlotDelete(slot)}
-                        >
-                          Delete
-                        </button>
                       </div>
                     </div>
                   );
@@ -524,7 +577,7 @@ const Admin = () => {
       <Modal isOpen={showAddModal === "case"} onClose={closeAddModal}>
         <div className="admin-edit-modal">
           <p style={{ fontWeight: "bold", fontSize: "17.5px", marginBottom: "16px" }}>Add New Case</p>
-          <div className="admin-field" style={{ marginBottom: "12px" }}>
+          <div className="admin-field admin-field-horizontal" style={{ marginBottom: "12px" }}>
             <label className="admin-label">Title <span style={{ color: "rgba(0,0,0,0.7)" }}>*</span></label>
             <input
               className="admin-input"
@@ -533,7 +586,7 @@ const Admin = () => {
               onChange={(e) => setCaseTitle(e.target.value)}
             />
           </div>
-          <div className="admin-field" style={{ marginBottom: "12px" }}>
+          <div className="admin-field admin-field-horizontal" style={{ marginBottom: "12px" }}>
             <label className="admin-label">Date <span style={{ color: "rgba(0,0,0,0.7)" }}>*</span></label>
             <input
               className="admin-input"
@@ -555,16 +608,28 @@ const Admin = () => {
           <div className="admin-field" style={{ marginBottom: "12px" }}>
             <label className="admin-label">Image</label>
             <input
-              className="admin-file-input"
+              id="case-image-input"
               type="file"
               accept="image/*"
               onChange={handleCaseImageUpload}
+              style={{ display: "none" }}
             />
-            {caseImagePreview && (
-              <img src={caseImagePreview} alt="Preview" className="admin-image-preview" />
+            {!caseImagePreview ? (
+              <div className="admin-image-upload-area" onClick={handleCaseImageReplace}>
+                <i className="fas fa-cloud-upload-alt admin-image-upload-icon"></i>
+                <span className="admin-image-upload-text">Click to upload image</span>
+              </div>
+            ) : (
+              <div className="admin-image-preview-wrapper">
+                <img src={caseImagePreview} alt="Preview" className="admin-image-preview" />
+                <div className="admin-image-overlay">
+                  <button className="admin-image-overlay-btn admin-image-overlay-replace" onClick={handleCaseImageReplace} title="Replace image"><i className="fas fa-upload"></i></button>
+                  <button className="admin-image-overlay-btn admin-image-overlay-delete" onClick={handleCaseImageDelete} title="Delete image"><i className="fas fa-trash"></i></button>
+                </div>
+              </div>
             )}
           </div>
-          <div className="admin-field" style={{ marginBottom: "12px" }}>
+          <div className="admin-field admin-field-horizontal" style={{ marginBottom: "12px" }}>
             <label className="admin-label">Category <span style={{ color: "rgba(0,0,0,0.7)" }}>*</span></label>
             <select
               className="admin-select"
@@ -587,7 +652,7 @@ const Admin = () => {
       <Modal isOpen={showAddModal === "team"} onClose={closeAddModal}>
         <div className="admin-edit-modal">
           <p style={{ fontWeight: "bold", fontSize: "17.5px", marginBottom: "16px" }}>Add New Team Member</p>
-          <div className="admin-field" style={{ marginBottom: "12px" }}>
+          <div className="admin-field admin-field-horizontal" style={{ marginBottom: "12px" }}>
             <label className="admin-label">Name <span style={{ color: "rgba(0,0,0,0.7)" }}>*</span></label>
             <input
               className="admin-input"
@@ -596,8 +661,8 @@ const Admin = () => {
               onChange={(e) => setTeamName(e.target.value)}
             />
           </div>
-          <div className="admin-field" style={{ marginBottom: "12px" }}>
-            <label className="admin-label">Date / Role <span style={{ color: "rgba(0,0,0,0.7)" }}>*</span></label>
+          <div className="admin-field admin-field-horizontal" style={{ marginBottom: "12px" }}>
+            <label className="admin-label">Role <span style={{ color: "rgba(0,0,0,0.7)" }}>*</span></label>
             <input
               className="admin-input"
               type="text"
@@ -618,13 +683,25 @@ const Admin = () => {
           <div className="admin-field" style={{ marginBottom: "12px" }}>
             <label className="admin-label">Photo</label>
             <input
-              className="admin-file-input"
+              id="team-image-input"
               type="file"
               accept="image/*"
               onChange={handleTeamImageUpload}
+              style={{ display: "none" }}
             />
-            {teamImagePreview && (
-              <img src={teamImagePreview} alt="Preview" className="admin-image-preview" />
+            {!teamImagePreview ? (
+              <div className="admin-image-upload-area" onClick={handleTeamImageReplace}>
+                <i className="fas fa-cloud-upload-alt admin-image-upload-icon"></i>
+                <span className="admin-image-upload-text">Click to upload photo</span>
+              </div>
+            ) : (
+              <div className="admin-image-preview-wrapper">
+                <img src={teamImagePreview} alt="Preview" className="admin-image-preview" />
+                <div className="admin-image-overlay">
+                  <button className="admin-image-overlay-btn admin-image-overlay-replace" onClick={handleTeamImageReplace} title="Replace image"><i className="fas fa-upload"></i></button>
+                  <button className="admin-image-overlay-btn admin-image-overlay-delete" onClick={handleTeamImageDelete} title="Delete image"><i className="fas fa-trash"></i></button>
+                </div>
+              </div>
             )}
           </div>
           <div className="admin-edit-modal-buttons">
@@ -642,7 +719,7 @@ const Admin = () => {
             <p style={{ fontWeight: "bold", fontSize: "17.5px", marginBottom: "16px" }}>
               Edit {editModal.type === "case" ? "Case" : "Team Member"}
             </p>
-            <div className="admin-field" style={{ marginBottom: "12px" }}>
+            <div className="admin-field admin-field-horizontal" style={{ marginBottom: "12px" }}>
               <label className="admin-label">{editModal.type === "case" ? "Title" : "Name"} <span style={{ color: "rgba(0,0,0,0.7)" }}>*</span></label>
               <input
                 className="admin-input"
@@ -651,11 +728,12 @@ const Admin = () => {
                 onChange={(e) => setEditTitle(e.target.value)}
               />
             </div>
-            <div className="admin-field" style={{ marginBottom: "12px" }}>
-              <label className="admin-label">Date / Role <span style={{ color: "rgba(0,0,0,0.7)" }}>*</span></label>
+            <div className="admin-field admin-field-horizontal" style={{ marginBottom: "12px" }}>
+              <label className="admin-label">{editModal.type === "case" ? "Date" : "Role"} <span style={{ color: "rgba(0,0,0,0.7)" }}>*</span></label>
               <input
                 className="admin-input"
                 type="text"
+                placeholder={editModal.type === "case" ? "e.g. March 2025" : "e.g. Lead Genealogist"}
                 value={editDate}
                 onChange={(e) => setEditDate(e.target.value)}
               />
@@ -672,17 +750,29 @@ const Admin = () => {
             <div className="admin-field" style={{ marginBottom: "12px" }}>
               <label className="admin-label">Image</label>
               <input
-                className="admin-file-input"
+                id="edit-image-input"
                 type="file"
                 accept="image/*"
                 onChange={handleEditImageUpload}
+                style={{ display: "none" }}
               />
-              {editImagePreview && (
-                <img src={editImagePreview} alt="Preview" className="admin-image-preview" />
+              {!editImagePreview ? (
+                <div className="admin-image-upload-area" onClick={handleEditImageReplace}>
+                  <i className="fas fa-cloud-upload-alt admin-image-upload-icon"></i>
+                  <span className="admin-image-upload-text">Click to upload image</span>
+                </div>
+              ) : (
+                <div className="admin-image-preview-wrapper">
+                  <img src={editImagePreview} alt="Preview" className="admin-image-preview" />
+                <div className="admin-image-overlay">
+                  <button className="admin-image-overlay-btn admin-image-overlay-replace" onClick={handleEditImageReplace} title="Replace image"><i className="fas fa-upload"></i></button>
+                  <button className="admin-image-overlay-btn admin-image-overlay-delete" onClick={handleEditImageDelete} title="Delete image"><i className="fas fa-trash"></i></button>
+                </div>
+                </div>
               )}
             </div>
             {editModal.type === "case" && (
-              <div className="admin-field" style={{ marginBottom: "12px" }}>
+              <div className="admin-field admin-field-horizontal" style={{ marginBottom: "12px" }}>
                 <label className="admin-label">Category <span style={{ color: "rgba(0,0,0,0.7)" }}>*</span></label>
                 <select
                   className="admin-select"
@@ -742,6 +832,38 @@ const Admin = () => {
                 <i className="fas fa-trash" style={{ marginRight: "6px" }}></i>Delete
               </button>
             </div>
+          </div>
+        )}
+      </Modal>
+
+      {/* Preview Modal */}
+      <Modal isOpen={!!previewItem} onClose={() => setPreviewItem(null)}>
+        {previewItem && (
+          <div className="admin-edit-modal">
+            {previewItem.type === "case" ? (
+              <>
+                <p style={{ fontWeight: "bold", fontSize: "17.5px", marginBottom: "8px" }}>{previewItem.item.title}</p>
+                <p style={{ fontSize: "17.5px", color: "rgba(0,0,0,0.7)", marginBottom: "8px" }}>{previewItem.item.date}</p>
+                <p style={{ fontSize: "17.5px", color: "rgba(0,0,0,0.7)", marginBottom: "12px" }}>{previewItem.item.category === "law-enforcement" ? "Law Enforcement" : "Genetic Genealogy"}</p>
+                <img
+                  src={previewItem.item.image}
+                  alt={previewItem.item.title}
+                  style={{ height: "250px", objectFit: "cover", marginBottom: "12px", alignSelf: "center" }}
+                />
+                <p style={{ fontSize: "17.5px", color: "rgba(0,0,0,0.7)" }}>{previewItem.item.description}</p>
+              </>
+            ) : (
+              <>
+                <p style={{ fontWeight: "bold", fontSize: "17.5px", marginBottom: "8px" }}>{previewItem.item.name}</p>
+                <p style={{ fontSize: "17.5px", color: "rgba(0,0,0,0.7)", marginBottom: "12px" }}>{previewItem.item.date}</p>
+                <img
+                  src={previewItem.item.image}
+                  alt={previewItem.item.name}
+                  style={{ height: "250px", objectFit: "cover", marginBottom: "12px", alignSelf: "center" }}
+                />
+                <p style={{ fontSize: "17.5px", color: "rgba(0,0,0,0.7)" }}>{previewItem.item.description}</p>
+              </>
+            )}
           </div>
         )}
       </Modal>
