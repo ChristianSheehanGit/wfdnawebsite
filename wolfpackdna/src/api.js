@@ -6,7 +6,8 @@
 
 // In development, Vite proxies /api requests to the backend (see vite.config.ts).
 // In production, set VITE_API_BASE_URL to your deployed API URL.
-const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
+// Default to the Cloud Run deployed API URL for testing.
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'https://wolf2-616938642091.us-central1.run.app';
 
 /**
  * Generic fetch wrapper with error handling.

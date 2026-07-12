@@ -82,9 +82,22 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middleware
-app.use(cors());
+// Configure CORS for production and development
+const corsOptions = {
+  origin: true, // Allow all origins (Cloud Run will handle different origins)
+  credentials: true,
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Root route for testing
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Wolfpack DNA API',
+    endpoints: ['/api/health', '/api/cases', '/api/team', '/api/inquiries', '/api/images'],
+  });
+});
 
 // Routes
 app.use('/api/cases', caseRoutes);
