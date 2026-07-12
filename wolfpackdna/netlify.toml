@@ -6,3 +6,6 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+[build.environment]
+  VITE_API_BASE_URL = "https://wolf2-616938642091.us-central1.run.app/api"
