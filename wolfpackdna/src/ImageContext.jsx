@@ -1,12 +1,14 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import defaultLogo from "./assets/logo.png";
-import defaultBanner from "./assets/banner.jpg";
 
 const STORAGE_KEY = "wolfpackdna_images";
 
+// All slots default to an empty string. The website renders a placeholder for
+// any empty slot and shows the uploaded image (fetched from Google Cloud
+// Storage via the admin) once one is set. The previously bundled local logo
+// and banner assets are no longer used as defaults.
 const defaultImages = {
-  logo: defaultLogo,
-  banner: defaultBanner,
+  logo: "",
+  banner: "",
   about: "",
   "genetic-genealogy": "",
   "law-enforcement": "",
@@ -55,7 +57,7 @@ export const ImageProvider = ({ children }) => {
   };
 
   return (
-    <ImageContext.Provider value={{ images, updateImage, deleteImage, getImage }}>
+    <ImageContext.Provider value={{ images, updateImage, deleteImage, getImage, defaultImages }}>
       {children}
     </ImageContext.Provider>
   );

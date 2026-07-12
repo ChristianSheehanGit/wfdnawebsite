@@ -1,0 +1,133 @@
+/* RichTextEditor.css */
+.rich-text-editor {
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  background: #fff;
+  font-family: font;
+  position: relative;
+}
+
+.rich-text-toolbar {
+  display: flex;
+  gap: 4px;
+  padding: 6px 8px;
+  background: rgba(216, 216, 216, 0.2);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.rich-text-btn {
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  padding: 4px 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.rich-text-btn:hover {
+  background: rgba(216, 216, 216, 0.5);
+  border-color: rgba(63, 149, 156, 0.6);
+}
+
+.rich-text-btn-primary {
+  background: rgba(63, 149, 156, 0.85);
+  color: #fff;
+  border: none;
+}
+
+.rich-text-btn-primary:hover {
+  background: rgb(53, 123, 130);
+}
+
+.rich-text-content {
+  min-height: 80px;
+  max-height: 450px;
+  padding: 10px 12px;
+  font-size: 17.5px;
+  color: rgba(0, 0, 0, 0.7);
+  outline: none;
+  text-align: left !important;
+  direction: ltr !important;
+  unicode-bidi: plaintext !important;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.rich-text-content:empty:before {
+  content: attr(data-placeholder);
+  color: rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+}
+
+.rich-text-content:focus {
+  box-shadow: 0 0 0 2px rgba(63, 149, 156), 0 0 0 4px rgba(77, 134, 141, 0.15);
+}
+
+/* Styling for formatted text */
+.rich-text-content strong {
+  font-weight: bold;
+}
+
+.rich-text-content u {
+  text-decoration: underline;
+}
+
+.rich-text-content a {
+  color: rgba(63, 149, 156);
+  text-decoration: underline;
+}
+
+.rich-text-content a:hover {
+  color: rgb(53, 123, 130);
+}
+
+.rich-text-link-dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.rich-text-link-form {
+  background: #fff;
+  padding: 20px;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.rich-text-link-title {
+  font-weight: bold;
+  font-size: 17.5px;
+  margin: 0 0 8px;
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.rich-text-link-input {
+  font-family: font;
+  font-size: 17.5px;
+  padding: 8px 12px;
+  background: #fff;
+  color: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  outline: none;
+}
+
+.rich-text-link-input:focus {
+  border-color: rgba(63, 149, 156);
+  box-shadow: 0 0 0 2px rgba(63, 149, 156, 0.2);
+}
+
+.rich-text-link-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}

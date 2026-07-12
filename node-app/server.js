@@ -1,0 +1,124 @@
+const express = require('express');
+const cors = require('cors');
+const dotenv = require('dotenv');
+const firebaseAdmin = require('firebase-admin');
+const { getFirestore } = require('firebase-admin/firestore');
+const firestoreDb = require('./services/firestoreDbService');
+const cloudStorage = require('./services/cloudStorageService');
+const caseRoutes = require('./routes/caseRoutes');
+const teamRoutes = require('./routes/teamRoutes');
+const inquiryRoutes = require('./routes/inquiryRoutes');
+const imageRoutes = require('./routes/imageRoutes');
+
+// Load environment variables from .env
+dotenv.config();
+
+// ---------------------------------------------------------------------------
+// Firebase Admin SDK Initialization
+// ---------------------------------------------------------------------------
+// Credentials are read from environment variables (see .env file for reference).
+// In production, set these via your deployment platform (e.g., Railway, Render,
+// Google Cloud Run, etc.) -- do NOT commit real credentials to version control.
+// ---------------------------------------------------------------------------
+const firebaseProjectId = process.env.FIREBASE_PROJECT_ID;
+const firebaseClientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+let firebasePrivateKey = process.env.FIREBASE_PRIVATE_KEY;
+
+if (firebasePrivateKey) {
+  // The private key in .env may have literal \n escape sequences.
+  // Replace them with actual newlines and handle optional double-quotes.
+  firebasePrivateKey = firebasePrivateKey.replace(/\\n/g, '\n').replace(/^"|"$/g, '');
+}
+
+let firebaseInitialized = false;
+
+if (firebaseProjectId && firebaseClientEmail && firebasePrivateKey) {
+  try {
+    firebaseAdmin.initializeApp({
+      credential: firebaseAdmin.cert({
+        projectId: firebaseProjectId,
+        clientEmail: firebaseClientEmail,
+        privateKey: firebasePrivateKey,
+      }),
+    });
+    firebaseInitialized = true;
+    console.log('[Firebase] Admin SDK initialized successfully.');
+  } catch (err) {
+    console.error('[Firebase] Failed to initialize Admin SDK:', err.message);
+  }
+} else {
+  console.warn(
+    '[Firebase] Missing credentials (FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY). ' +
+    'Firestore will be unavailable. Set these in your .env file or environment.'
+  );
+}
+
+// Initialize our Firestore service wrapper if Firebase initialized
+if (firebaseInitialized) {
+  firestoreDb.init(getFirestore(firebaseAdmin.getApp()));
+  console.log('[Firestore] Database service ready.');
+
+  // Initialize Cloud Storage with the same service account credentials
+  cloudStorage.init({
+    projectId: firebaseProjectId,
+    clientEmail: firebaseClientEmail,
+    privateKey: firebasePrivateKey,
+  });
+  console.log('[GCS] Cloud Storage service ready.');
+
+  // -----------------------------------------------------------------------
+  // Warm-up: Fire a dummy query to pre-fetch the OAuth2 access token.
+  // Without this, the first real request incurs an extra ~1-2s delay while
+  // the Admin SDK fetches its token from Google's auth server.
+  // -----------------------------------------------------------------------
+  firestoreDb.findAll('cases').catch(() => {});
+  console.log('[Firestore] Token pre-warmed.');
+}
+
+// ---------------------------------------------------------------------------
+// Express App Setup
+// ---------------------------------------------------------------------------
+const app = express();
+const PORT = process.env.PORT || 3001;
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Routes
+app.use('/api/cases', caseRoutes);
+app.use('/api/team', teamRoutes);
+app.use('/api/inquiries', inquiryRoutes);
+app.use('/api/images', imageRoutes);
+
+// Health check
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    firestore: firebaseInitialized ? 'connected' : 'disconnected (check credentials)',
+    timestamp: new Date().toISOString(),
+  });
+});
+
+app.listen(PORT, () => {
+  console.log(`Wolfpack DNA Admin API running on port ${PORT}`);
+
+  // -----------------------------------------------------------------------
+  // Keep-alive: ping ourselves every 5 minutes to prevent cold starts on
+  // hosting platforms that spin down idle instances (e.g. Render, Railway).
+  // -----------------------------------------------------------------------
+  const KEEP_ALIVE_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
+  setInterval(async () => {
+    try {
+      const url = `http://localhost:${PORT}/api/health`;
+      const response = await fetch(url);
+      const body = await response.json();
+      console.log(`[KeepAlive] ${body.status} @ ${body.timestamp}`);
+    } catch (err) {
+      // Silently ignore — the server might be in the middle of shutting down
+    }
+  }, KEEP_ALIVE_INTERVAL_MS);
+
+  console.log(`[KeepAlive] Will self-ping every ${KEEP_ALIVE_INTERVAL_MS / 1000}s to prevent cold starts.`);
+});

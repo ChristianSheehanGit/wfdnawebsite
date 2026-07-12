@@ -23,7 +23,7 @@
 .card-live-indicator {
   position: absolute;
   top: 8px;
-  right: 8px;
+  left: 8px;
   background: #d32f2f;
   color: #fff;
   font-size: 12px;
@@ -58,4 +58,22 @@
   font-size: 17.5px;
   margin: 4px 0 0;
   color: #666;
+}
+
+/* Prevent text/image selection on draggable cards for better drag experience */
+.admin-card-wrapper[draggable] {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.admin-card-wrapper[draggable] .card-image {
+  -webkit-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }

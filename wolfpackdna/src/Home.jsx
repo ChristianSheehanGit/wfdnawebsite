@@ -61,50 +61,103 @@ const Home = () => {
   return (
     <div>
       <Navbar />
-      <div style={{ height: "46.1px" }}></div>
+      <div style={{ height: "45px" }}></div>
 
       {/* Banner */}
-      <div className="banner" style={{ backgroundImage: `url(${getImage("banner")})` }}>
-        <div className="banner-overlay" />
+      {getImage("banner") ? (
+        <div className="banner" style={{ backgroundImage: `url(${getImage("banner")})` }}>
+          <div className="banner-overlay" />
 
-        {/* LEFT half — logo */}
-        <div className="banner-left">
-          <img style={{ width: "300px" }} src={getImage("logo")} />
-        </div>
-
-        {/* RIGHT half — text, button */}
-        <div className="banner-right">
-          <div style={{ maxWidth: "500px", textAlign: "left" }}>
-            Harnessing the power of DNA and family history to solve cold cases and reunite families
-          </div>
-
-          <div className="cta-wrapper" ref={dropdownRef}>
-            <button className="cta-btn" onClick={() => setOpen((prev) => !prev)}>
-              Make an Inquiry
-              <span className="chevron" style={{ transform: open ? "rotate(180deg)" : "rotate(0deg)" }}>
-                ▾
-              </span>
-            </button>
-
-            {open && (
-              <div className="dropdown">
-                <a href="/#/inquiry/law-enforcement" className="dropdown-item"
-                  style={{ transition: "background 0.1s ease" }}
-                  onMouseEnter={e => e.currentTarget.style.background = "rgb(46, 108, 114)"}
-                  onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
-                  Law Enforcement
-                </a>
-          <a href="/#/inquiry/genetic-genealogy" className="dropdown-item"
-                  style={{ transition: "background 0.1s ease" }}
-                  onMouseEnter={e => e.currentTarget.style.background = "rgb(46, 108, 114)"}
-                  onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
-                  Genetic Genealogy
-                </a>
-              </div>
+          {/* LEFT half — logo */}
+          <div className="banner-left">
+            {getImage("logo") ? (
+              <img style={{ width: "300px" }} src={getImage("logo")} alt="Logo" />
+            ) : (
+              <div className="banner-logo-placeholder">Logo</div>
             )}
           </div>
+
+          {/* RIGHT half — text, button */}
+          <div className="banner-right">
+            <div style={{ maxWidth: "500px", textAlign: "left" }}>
+              Harnessing the power of DNA and family history to solve cold cases and reunite families
+            </div>
+
+            <div className="cta-wrapper" ref={dropdownRef}>
+              <button className="cta-btn" onClick={() => setOpen((prev) => !prev)}>
+                Make an Inquiry
+                <span className="chevron" style={{ transform: open ? "rotate(180deg)" : "rotate(0deg)" }}>
+                  ▾
+                </span>
+              </button>
+
+              {open && (
+                <div className="dropdown">
+                  <a href="/#/inquiry/law-enforcement" className="dropdown-item"
+                    style={{ transition: "background 0.1s ease" }}
+                    onMouseEnter={e => e.currentTarget.style.background = "rgb(46, 108, 114)"}
+                    onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+                    Law Enforcement
+                  </a>
+                  <a href="/#/inquiry/genetic-genealogy" className="dropdown-item"
+                    style={{ transition: "background 0.1s ease" }}
+                    onMouseEnter={e => e.currentTarget.style.background = "rgb(46, 108, 114)"}
+                    onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+                    Genetic Genealogy
+                  </a>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
-      </div>
+      ) : (
+        // Placeholder banner shown until an admin uploads a banner image.
+        <div className="banner banner-placeholder">
+          <div className="banner-overlay" />
+
+          {/* LEFT half — logo */}
+          <div className="banner-left">
+            {getImage("logo") ? (
+              <img style={{ width: "300px" }} src={getImage("logo")} alt="Logo" />
+            ) : (
+              <div className="banner-logo-placeholder">Logo</div>
+            )}
+          </div>
+
+          {/* RIGHT half — text, button */}
+          <div className="banner-right">
+            <div style={{ maxWidth: "500px", textAlign: "left" }}>
+              Harnessing the power of DNA and family history to solve cold cases and reunite families
+            </div>
+
+            <div className="cta-wrapper" ref={dropdownRef}>
+              <button className="cta-btn" onClick={() => setOpen((prev) => !prev)}>
+                Make an Inquiry
+                <span className="chevron" style={{ transform: open ? "rotate(180deg)" : "rotate(0deg)" }}>
+                  ▾
+                </span>
+              </button>
+
+              {open && (
+                <div className="dropdown">
+                  <a href="/#/inquiry/law-enforcement" className="dropdown-item"
+                    style={{ transition: "background 0.1s ease" }}
+                    onMouseEnter={e => e.currentTarget.style.background = "rgb(46, 108, 114)"}
+                    onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+                    Law Enforcement
+                  </a>
+                  <a href="/#/inquiry/genetic-genealogy" className="dropdown-item"
+                    style={{ transition: "background 0.1s ease" }}
+                    onMouseEnter={e => e.currentTarget.style.background = "rgb(46, 108, 114)"}
+                    onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+                    Genetic Genealogy
+                  </a>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Recent Cases */}
       <div className="section-recent-cases">

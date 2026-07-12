@@ -361,6 +361,15 @@
   position: relative;
 }
 
+/* Draggable team cards - entire card can be dragged */
+.admin-card-wrapper[draggable] {
+  cursor: grab;
+}
+
+.admin-card-wrapper[draggable]:active {
+  cursor: grabbing;
+}
+
 .admin-card-edit {
   position: absolute;
   top: 8px;
@@ -926,4 +935,26 @@
   .admin-form {
     padding: 20px;
   }
+}
+/* Checkbox styling for admin forms */
+.admin-checkbox {
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  background: #fff;
+  cursor: pointer;
+  position: relative;
+}
+
+.admin-checkbox:checked::after {
+  content: "";
+  position: absolute;
+  left: 7.5px;
+  top: 3px;
+  width: 7px;
+  height: 11px;
+  border: solid rgba(63, 149, 156);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
 }
