@@ -7,6 +7,12 @@
 const cloudStorage = require('../services/cloudStorageService');
 
 /**
+ * Image Controller - placeholder
+ * Handles image uploads/replacements to the GCS bucket.
+ * Accepts a file and a target filename, and uploads/replaces it.
+ */
+
+/**
  * POST /api/images/upload
  * Upload or replace an image.
  * Expects multipart/form-data with:

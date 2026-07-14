@@ -43,6 +43,15 @@
   padding: 8px 32px 0 32px;
 }
 
+/* Title text at the top of the sticky header bar: keep an 8px gap below it
+   (overriding the inline 12px used on individual modal titles). Targets the
+   direct children of .modal-header — both a bare <p> title and a <div> wrapper
+   (used by the Cases page and Admin case/team preview modals) — so every
+   modal's sticky-bar title gap is uniformly 8px. */
+.modal-header > * {
+  margin-bottom: 8px !important;
+}
+
 .modal-body {
   padding: 16px 32px 32px 32px;
   overflow-y: auto;
@@ -58,7 +67,42 @@
   color: #3f959c;
 }
 
-.modal-content img {
+/* Enforce the site's font face, size and color on ALL content rendered inside
+   modals, including HTML injected via dangerouslySetInnerHTML (e.g. the
+   preview modals). This overrides any inline styles (font-family, font-size,
+   color) carried over from pasted external content so every modal throughout
+   the site renders uniformly in the "font" face at 17.5px, rgba(0,0,0,0.7). */
+.modal-body,
+.modal-body * {
+  font-family: font !important;
+  font-size: 17.5px !important;
+  color: rgba(0, 0, 0, 0.7) !important;
+}
+
+/* Preserve link accent color inside modal content. */
+.modal-body a {
+  color: var(--accent) !important;
+}
+
+.modal-body a:hover {
+  color: #3f959c !important;
+}
+
+/* Re-assert the intended colors for interactive controls that sit inside
+   modals, since the global .modal-body * color rule above would otherwise
+   override their white text on colored backgrounds. Links keep the accent
+   color; action buttons keep their light foreground. */
+.modal-body .admin-btn {
+  font-family: "font", monospace !important;
+  font-size: 17.5px !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.modal-body .modal-donate-submit {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.modal-body img {
   width: auto;
   max-height: 275px;
 }

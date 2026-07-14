@@ -5,26 +5,19 @@ import Footer from "./components/footer.jsx";
 import Card from "./components/card.jsx";
 import Modal from "./components/modal.jsx";
 import { useImages } from "./ImageContext.jsx";
+import { fetchCases } from "./api.js";
 import "./App.css";
 import "./donate.css";
 
-const recentCasesList = [
-  { id: 1, title: "John Doe Identification", date: "March 2025", category: "law-enforcement", description: "Placeholder case description. Unidentified remains case resolved through forensic genetic genealogy. DNA analysis and family tree construction led to a positive identification after 15 years." },
-  { id: 2, title: "Jane Smith Family Reunification", date: "January 2025", category: "genetic-genealogy", description: "Placeholder case description. Adoptee searching for biological family. DNA testing and genealogical research successfully identified birth parents and facilitated reunification." },
-  { id: 3, title: "Unknown Remains 2024-017", date: "November 2024", category: "law-enforcement", description: "Placeholder case description. John Doe found in 2019. Forensic genealogy analysis provided investigative leads that resulted in identification and closure for the family." },
-  { id: 4, title: "Cold Case Homicide 2012", date: "August 2024", category: "law-enforcement", description: "Placeholder case description. Law enforcement cold case reopened. DNA evidence reanalyzed and genealogical databases used to identify a suspect previously unknown to investigators." },
-  { id: 5, title: "Biological Sibling Search", date: "June 2024", category: "genetic-genealogy", description: "Placeholder case description. Individual seeking to identify biological siblings. DNA analysis and genealogical records matched with half-siblings, leading to new family connections." },
-  { id: 6, title: "Unidentified Juvenile 2018", date: "April 2024", category: "law-enforcement", description: "Placeholder case description. Remains of a juvenile found in 2018. Genetic genealogy investigation identified the individual and provided answers to the family after years of searching." },
-];
-
 const Home = () => {
-  const { getImage } = useImages();
+  const { getImage, failed, markFailed } = useImages();
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
   const [activeCase, setActiveCase] = useState(null);
   const [selectedOneTime, setSelectedOneTime] = useState(null);
   const [selectedRecurring, setSelectedRecurring] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [recentCases, setRecentCases] = useState([]);
   const location = useLocation();
 
   useEffect(() => {
@@ -58,20 +51,34 @@ const Home = () => {
     }
   }, [location.hash]);
 
+  useEffect(() => {
+    loadRecentCases();
+  }, []);
+
+  async function loadRecentCases() {
+    try {
+      const fetchedCases = await fetchCases();
+      const sorted = [...fetchedCases].sort((a, b) => new Date(b.date) - new Date(a.date));
+      setRecentCases(sorted.slice(0, 4));
+    } catch (err) {
+      console.error("Failed to load recent cases:", err);
+    }
+  }
+
   return (
     <div>
       <Navbar />
       <div style={{ height: "45px" }}></div>
 
       {/* Banner */}
-      {getImage("banner") ? (
+      {!failed.banner ? (
         <div className="banner" style={{ backgroundImage: `url(${getImage("banner")})` }}>
           <div className="banner-overlay" />
 
           {/* LEFT half — logo */}
           <div className="banner-left">
-            {getImage("logo") ? (
-              <img style={{ width: "300px" }} src={getImage("logo")} alt="Logo" />
+            {!failed.logo ? (
+              <img style={{ width: "300px" }} src={getImage("logo")} alt="Logo" onError={() => markFailed("logo")} />
             ) : (
               <div className="banner-logo-placeholder">Logo</div>
             )}
@@ -117,8 +124,8 @@ const Home = () => {
 
           {/* LEFT half — logo */}
           <div className="banner-left">
-            {getImage("logo") ? (
-              <img style={{ width: "300px" }} src={getImage("logo")} alt="Logo" />
+            {!failed.logo ? (
+              <img style={{ width: "300px" }} src={getImage("logo")} alt="Logo" onError={() => markFailed("logo")} />
             ) : (
               <div className="banner-logo-placeholder">Logo</div>
             )}
@@ -166,14 +173,14 @@ const Home = () => {
           <a href="/#/cases" className="see-all-link">See All Cases →</a>
         </div>
         <div className="recent-cases-grid">
-          {recentCasesList.slice(0, isMobile ? 3 : 4).map((c, idx) => (
+          {recentCases.slice(0, isMobile ? 3 : 4).map((c) => (
             <Card
               key={c.id}
-              image={`https://placehold.co/300x300/eee/999?text=Case+${c.id}`}
-              title={c.title}
+              image={c.image || `https://placehold.co/300x300/eee/999?text=Case+${c.id}`}
+              title={c.title || c.name}
               subtitle={c.date}
               onClick={() => setActiveCase(c)}
-              live={idx < 2}
+              live={c.live}
             />
           ))}
         </div>
@@ -190,23 +197,38 @@ const Home = () => {
           </button>
         </div>
 
-        {/* RIGHT — about image */}
+          {/* RIGHT — about image */}
         <div className="right">
-          {getImage("about") ? (
-            <img src={getImage("about")} alt="About Us" className="about-img" />
+          {!failed.about ? (
+            <img src={getImage("about")} alt="About Us" className="about-img" onError={() => markFailed("about")} />
           ) : (
             <div className="about-img-placeholder" />
           )}
         </div>
       </div>
 
-      <Modal isOpen={!!activeCase} onClose={() => setActiveCase(null)} showDonate={activeCase && recentCasesList.indexOf(activeCase) < 2}>
+      <Modal isOpen={!!activeCase} onClose={() => setActiveCase(null)} showDonate={activeCase && recentCases.indexOf(activeCase) < 2} wide stickyHeader={
+        activeCase && (
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "8px", position: "relative" }}>
+            <p style={{ fontWeight: "bold", fontSize: "17.5px", margin: 0 }}>{activeCase.title || activeCase.name}</p>
+            {activeCase.live && <span style={{ position: "absolute", left: "0", background: "#d32f2f", color: "#fff", fontSize: "12px", fontWeight: "bold", padding: "2px 8px" }}>LIVE</span>}
+          </div>
+        )
+      }>
         {activeCase && (
           <>
-            <p style={{ fontWeight: "bold" }}>{activeCase.title}</p>
-            <p style={{ marginTop: "0px" }}>{activeCase.date}</p>
-            <p>{activeCase.category === "law-enforcement" ? "Law Enforcement" : "Genetic Genealogy"}</p>
-            <p>{activeCase.description}</p>
+            <img
+              src={activeCase.image}
+              alt={activeCase.title || activeCase.name}
+              style={{ height: "250px", objectFit: "cover", marginBottom: "12px", alignSelf: "center" }}
+            />
+            <div style={{ color: "rgba(0,0,0,0.7)", textAlign: "left", marginBottom: "12px" }}>
+              <p style={{ margin: "0 0 4px 0" }}><b>Date:</b> {activeCase.date}</p>
+              {activeCase.type && (
+                <p style={{ margin: 0 }}><b>Service:</b> {activeCase.type === "genetic-genealogy" ? "Genetic Genealogy" : "Law Enforcement"}</p>
+              )}
+            </div>
+            <div style={{ color: "rgba(0,0,0,0.7)", textAlign: "left" }} dangerouslySetInnerHTML={{ __html: activeCase.description }} />
           </>
         )}
       </Modal>

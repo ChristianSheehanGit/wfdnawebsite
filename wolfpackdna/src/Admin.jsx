@@ -187,19 +187,10 @@ const Admin = () => {
   };
 
   // Images state
-  const { getImage, defaultImages, updateImage, deleteImage } = useImages();
+  const { getImage, failed, markFailed, updateImage, deleteImage } = useImages();
   const [imageUploads, setImageUploads] = useState({});
   const [imagePreviews, setImagePreviews] = useState({});
   const [imageSlotDelete, setImageSlotDelete] = useState(null);
-
-  // A slot has a custom (uploaded) image only when its current value differs
-  // from the built-in default (logo/banner default to local assets, the rest
-  // to empty string). This keeps the admin's empty-upload state consistent
-  // across all slots, including logo and banner.
-  const hasCustomImage = (key) => {
-    const current = getImage(key);
-    return !!current && current !== defaultImages[key];
-  };
 
   const imageSlots = [
     { key: "logo", label: "Logo", description: "Site logo displayed in the banner on the homepage" },
@@ -735,60 +726,60 @@ const Admin = () => {
           )}
           {activeTab === "images" && (
             <div className="admin-tab-section">
-              <div className="admin-images-grid">
-                {imageSlots.map((slot) => {
-                  const previewSrc = imagePreviews[slot.key];
-                  // Show the filled (image) state only when there's a local
-                  // preview in progress or a custom uploaded image. The built-in
-                  // defaults (logo/banner local assets) count as "empty" here so
-                  // deleting a logo/banner visibly clears the slot in the admin.
-                  const showFilled = !!previewSrc || hasCustomImage(slot.key);
-                  const displaySrc = previewSrc || (hasCustomImage(slot.key) ? getImage(slot.key) : null);
-                  return (
-                    <div key={slot.key} className="admin-image-slot">
-                      <div className="admin-image-slot-preview">
-                        {showFilled ? (
-                          <>
-                            <img src={displaySrc} alt={slot.label} />
-                            <div className="admin-image-slot-overlay">
-                              <span className="admin-image-slot-overlay-label">{slot.label}</span>
-                              <div className="admin-image-slot-overlay-buttons">
-                                <label className="admin-image-slot-overlay-btn admin-image-slot-overlay-replace" title="Replace image">
-                                  <i className="fas fa-upload"></i>
-                                  <input
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={(e) => handleImageSlotUpload(slot.key, e)}
-                                    hidden
-                                  />
-                                </label>
-                                <button
-                                  className="admin-image-slot-overlay-btn admin-image-slot-overlay-delete"
-                                  onClick={() => setImageSlotDelete(slot)}
-                                  title="Delete image"
-                                >
-                                  <i className="fas fa-trash"></i>
-                                </button>
-                              </div>
-                            </div>
-                          </>
-                        ) : (
-                          <label className="admin-image-slot-empty">
-                            <i className="fas fa-cloud-upload-alt admin-image-slot-empty-icon"></i>
-                            <span className="admin-image-slot-empty-text">Click to upload {slot.label.toLowerCase()}</span>
-                            <input
-                              type="file"
-                              accept="image/*"
-                              onChange={(e) => handleImageSlotUpload(slot.key, e)}
-                              hidden
-                            />
-                          </label>
-                        )}
+      <div className="admin-images-grid">
+        {imageSlots.map((slot) => {
+          const previewSrc = imagePreviews[slot.key];
+          // Show the filled (image) state when there's a local preview in
+          // progress, or when this slot's image has loaded successfully
+          // (i.e. it exists in the bucket and hasn't failed). Otherwise show
+          // the empty upload state.
+          const showFilled = !!previewSrc || (!failed[slot.key] && !previewSrc);
+          const displaySrc = previewSrc || getImage(slot.key);
+          return (
+            <div key={slot.key} className="admin-image-slot">
+              <div className="admin-image-slot-preview">
+                {showFilled ? (
+                  <>
+                    <img src={displaySrc} alt={slot.label} onError={() => markFailed(slot.key)} />
+                    <div className="admin-image-slot-overlay">
+                      <span className="admin-image-slot-overlay-label">{slot.label}</span>
+                      <div className="admin-image-slot-overlay-buttons">
+                        <label className="admin-image-slot-overlay-btn admin-image-slot-overlay-replace" title="Replace image">
+                          <i className="fas fa-upload"></i>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => handleImageSlotUpload(slot.key, e)}
+                            hidden
+                          />
+                        </label>
+                        <button
+                          className="admin-image-slot-overlay-btn admin-image-slot-overlay-delete"
+                          onClick={() => setImageSlotDelete(slot)}
+                          title="Delete image"
+                        >
+                          <i className="fas fa-trash"></i>
+                        </button>
                       </div>
                     </div>
-                  );
-                })}
+                  </>
+                ) : (
+                  <label className="admin-image-slot-empty">
+                    <i className="fas fa-cloud-upload-alt admin-image-slot-empty-icon"></i>
+                    <span className="admin-image-slot-empty-text">Click to upload {slot.label.toLowerCase()}</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleImageSlotUpload(slot.key, e)}
+                      hidden
+                    />
+                  </label>
+                )}
               </div>
+            </div>
+          );
+        })}
+      </div>
             </div>
           )}
         </div>
@@ -958,6 +949,15 @@ const Admin = () => {
       } dirty={editDirty} onDiscard={() => { setEditDirty(false); closeEditModal(); }} onSaveAndClose={editDirty ? handleSaveEdit : undefined}>
         {editModal && (
           <div className="admin-edit-modal">
+            <div className="admin-field admin-field-horizontal" style={{ marginBottom: "12px" }}>
+              <label className="admin-label">{editModal.type === "case" ? "Title" : "Name"} <span style={{ color: "rgba(0,0,0,0.7)" }}>*</span></label>
+              <input
+                className="admin-input"
+                type="text"
+                value={editTitle}
+                onChange={(e) => { setEditTitle(e.target.value); setEditDirty(true); }}
+              />
+            </div>
             <div className="admin-field admin-field-horizontal" style={{ marginBottom: "12px" }}>
               <label className="admin-label">{editModal.type === "case" ? "Date" : "Role"} <span style={{ color: "rgba(0,0,0,0.7)" }}>*</span></label>
               <div style={{ display: "flex", alignItems: "center", gap: "12px", flex: 1 }}>

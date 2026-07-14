@@ -29,6 +29,27 @@ const RichTextEditor = ({ value = "", onChange, placeholder }) => {
     }
   };
 
+  // Intercept paste and insert plain text only, so styling from the source
+  // (font face, size, colors) is never carried into the editor. The site's
+  // font/size is then enforced uniformly via CSS on .rich-text-content.
+  const handlePaste = (e) => {
+    e.preventDefault();
+    const text = e.clipboardData.getData("text/plain");
+    if (!text) return;
+    const selection = window.getSelection();
+    if (!selection.rangeCount) return;
+    const range = selection.getRangeAt(0);
+    range.deleteContents();
+    const node = document.createTextNode(text);
+    range.insertNode(node);
+    // Move the caret to the end of the inserted text.
+    range.setStartAfter(node);
+    range.setEndAfter(node);
+    selection.removeAllRanges();
+    selection.addRange(range);
+    updateContent();
+  };
+
   // Save selection - this captures selection before it can be lost
   const saveSelection = () => {
     const selection = window.getSelection();
@@ -122,6 +143,7 @@ const RichTextEditor = ({ value = "", onChange, placeholder }) => {
         className="rich-text-content"
         contentEditable
         onInput={updateContent}
+        onPaste={handlePaste}
         data-placeholder={placeholder}
         onBlur={updateContent}
         style={{ 

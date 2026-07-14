@@ -43,6 +43,7 @@
   min-height: 80px;
   max-height: 450px;
   padding: 10px 12px;
+  font-family: font;
   font-size: 17.5px;
   color: rgba(0, 0, 0, 0.7);
   outline: none;
@@ -51,6 +52,16 @@
   unicode-bidi: plaintext !important;
   overflow-y: auto;
   overflow-x: hidden;
+}
+
+/* Enforce the site's font face, size and color on all pasted/entered content,
+   overriding any inline styles (font-family, font-size, color) carried over
+   from external sources (e.g. a Word doc or web page). */
+.rich-text-content,
+.rich-text-content * {
+  font-family: font !important;
+  font-size: 17.5px !important;
+  color: rgba(0, 0, 0, 0.7) !important;
 }
 
 .rich-text-content:empty:before {

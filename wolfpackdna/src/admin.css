@@ -29,7 +29,7 @@
 
 .admin-login-title {
   font-family: "font", monospace;
-  font-weight: normal;
+  font-weight: bold;
   font-size: 17.5px;
   color: rgba(0, 0, 0, 0.7);
   margin: 0 0 0px;
@@ -359,6 +359,9 @@
 
 .admin-card-wrapper {
   position: relative;
+  /* Prevent the wrapper from stretching to the height of the tallest card in
+     a wrapped flex row, so each card is only as tall as its own content. */
+  align-self: flex-start;
 }
 
 /* Draggable team cards - entire card can be dragged */
