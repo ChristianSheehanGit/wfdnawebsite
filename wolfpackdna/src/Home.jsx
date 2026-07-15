@@ -207,11 +207,11 @@ const Home = () => {
         </div>
       </div>
 
-      <Modal isOpen={!!activeCase} onClose={() => setActiveCase(null)} showDonate={activeCase && !activeCase.givebutter_url && recentCases.indexOf(activeCase) < 2} wide stickyHeader={
+      <Modal isOpen={!!activeCase} onClose={() => setActiveCase(null)} wide stickyHeader={
         activeCase && (
           <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "8px", position: "relative" }}>
             <p style={{ fontWeight: "bold", fontSize: "17.5px", margin: 0 }}>{activeCase.title || activeCase.name}</p>
-            {activeCase.live && <span style={{ position: "absolute", left: "0", background: "#d32f2f", color: "#fff", fontSize: "12px", fontWeight: "bold", padding: "2px 8px" }}>LIVE</span>}
+            {activeCase.live && <span style={{ position: "absolute", left: "0", background: "#d32f2f", color: "#fff", fontSize: "12px", fontWeight: "bold", padding: "0px 8px" }}>LIVE</span>}
           </div>
         )
       }>
@@ -232,11 +232,11 @@ const Home = () => {
             {activeCase.givebutter_url && (
               <div style={{ display: "flex", justifyContent: "center", marginTop: "16px" }}>
                 <iframe
+                  name="givebutter"
+                  title="givebutter-iframe"
                   src={activeCase.givebutter_url.replace("https://givebutter.com/", "https://givebutter.com/embed/c/")}
-                  title="Givebutter Donation"
-                  style={{ width: "90%", border: "none" }}
-                  height="2000"
-                  scrolling="no"
+                  style={{ width: "100%", height: "585px", border: "none", overflow: "hidden" }}
+                  allowpaymentrequest="true"
                   allow="payment"
                 />
               </div>

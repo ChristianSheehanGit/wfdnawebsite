@@ -842,11 +842,11 @@ const Admin = () => {
             </select>
           </div>
           <div className="admin-field admin-field-horizontal" style={{ marginBottom: "12px" }}>
-            <label className="admin-label">Givebutter Link</label>
+            <label className="admin-label">Donation Link</label>
             <input
               className="admin-input"
               type="text"
-              placeholder="e.g. https://givebutter.com/PescaderoStateBeachJohnDoe"
+              placeholder="e.g. https://givebutter.com/JohnDoe"
               value={caseGivebutterUrl}
               onChange={(e) => { setCaseGivebutterUrl(e.target.value); setAddDirty(true); }}
             />
@@ -1014,11 +1014,11 @@ const Admin = () => {
                 </select>
               </div>
               <div className="admin-field admin-field-horizontal" style={{ marginBottom: "12px" }}>
-                <label className="admin-label">Givebutter Link</label>
+                <label className="admin-label">Donation Link</label>
                 <input
                   className="admin-input"
                   type="text"
-                  placeholder="e.g. https://givebutter.com/PescaderoStateBeachJohnDoe"
+                  placeholder="e.g. https://givebutter.com/JohnDoe"
                   value={editGivebutterUrl}
                   onChange={(e) => { setEditGivebutterUrl(e.target.value); setEditDirty(true); }}
                 />
@@ -1057,6 +1057,18 @@ const Admin = () => {
                 placeholder="Enter description..."
               />
             </div>
+            {editModal.type === "case" && editModal.item.givebutter_url && (
+              <div className="admin-field" style={{ marginBottom: "12px" }}>
+                <iframe
+                  name="givebutter"
+                  title="givebutter-iframe"
+                  src={editModal.item.givebutter_url.replace("https://givebutter.com/", "https://givebutter.com/embed/c/")}
+                  style={{ width: "100%", height: "585px", border: "none", overflow: "hidden" }}
+                  allowpaymentrequest="true"
+                  allow="payment"
+                />
+              </div>
+            )}
             <div className="admin-edit-modal-buttons">
               <button className="admin-btn admin-btn-danger" onClick={() => requestDelete(editModal.type, editModal.item.id, editModal.type === "case" ? editModal.item.title || editModal.item.name : editModal.item.name)}>
                 <i className="fas fa-trash" style={{ marginRight: "6px" }}></i>Delete
@@ -1115,7 +1127,7 @@ const Admin = () => {
         previewItem && previewItem.type === "case" ? (
           <div style={{ position: "relative", margin: "0 0 12px 0" }}>
             <p style={{ fontWeight: "bold", fontSize: "17.5px", margin: 0 }}>{previewItem.item.title || previewItem.item.name}</p>
-            {previewItem.item.live && <span style={{ position: "absolute", left: "0", top: "0", background: "rgba(192, 57, 43)", color: "#fff", fontSize: "12px", fontWeight: "bold", padding: "2px 8px" }}>LIVE</span>}
+            {previewItem.item.live && <span style={{ position: "absolute", left: "0", top: "0", background: "rgba(192, 57, 43)", color: "#fff", fontSize: "12px", fontWeight: "bold", padding: "0px 8px" }}>LIVE</span>}
           </div>
         ) : previewItem && previewItem.type === "team" ? (
           <p style={{ fontWeight: "bold", fontSize: "17.5px", margin: "0 0 12px 0" }}>{previewItem.item.name}</p>
@@ -1138,11 +1150,11 @@ const Admin = () => {
                 {previewItem.item.givebutter_url && (
                   <div style={{ display: "flex", justifyContent: "center", marginTop: "16px" }}>
                     <iframe
+                      name="givebutter"
+                      title="givebutter-iframe"
                       src={previewItem.item.givebutter_url.replace("https://givebutter.com/", "https://givebutter.com/embed/c/")}
-                      title="Givebutter Donation"
-                      style={{ width: "90%", border: "none" }}
-                      height="2000"
-                      scrolling="no"
+                      style={{ width: "100%", height: "585px", border: "none", overflow: "hidden" }}
+                      allowpaymentrequest="true"
                       allow="payment"
                     />
                   </div>

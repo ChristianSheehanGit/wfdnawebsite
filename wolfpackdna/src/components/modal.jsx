@@ -2,8 +2,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import "./modal.css";
 
-const Modal = ({ isOpen, onClose, children, showDonate = false, onDonateClose, wide = false, stickyHeader = null, dirty = false, onDiscard, onSaveAndClose }) => {
-  const [selectedDonateAmount, setSelectedDonateAmount] = useState(null);
+const Modal = ({ isOpen, onClose, children, wide = false, stickyHeader = null, dirty = false, onDiscard, onSaveAndClose }) => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [pendingAction, setPendingAction] = useState(null);
 
@@ -59,19 +58,6 @@ const Modal = ({ isOpen, onClose, children, showDonate = false, onDonateClose, w
         </div>
         <div className="modal-body">
           {children}
-          {showDonate && (
-            <div className="modal-donate">
-              <p className="modal-donate-title">Donate to this Case</p>
-              <div className="modal-donate-amounts">
-                <button className={`modal-donate-amount ${selectedDonateAmount === "$25" ? "amount-selected" : ""}`} onClick={() => setSelectedDonateAmount("$25")}>$25</button>
-                <button className={`modal-donate-amount ${selectedDonateAmount === "$50" ? "amount-selected" : ""}`} onClick={() => setSelectedDonateAmount("$50")}>$50</button>
-                <button className={`modal-donate-amount ${selectedDonateAmount === "$100" ? "amount-selected" : ""}`} onClick={() => setSelectedDonateAmount("$100")}>$100</button>
-                <button className={`modal-donate-amount modal-donate-custom ${selectedDonateAmount === "Custom" ? "amount-selected" : ""}`} onClick={() => setSelectedDonateAmount("Custom")}>Custom</button>
-              </div>
-              {selectedDonateAmount === "Custom" && <input type="number" className="custom-amount-input" placeholder="Enter amount" min="1" onKeyDown={(e) => { if (!/[0-9]/.test(e.key) && e.key !== "Backspace" && e.key !== "Tab" && e.key !== "Delete" && e.key !== "ArrowLeft" && e.key !== "ArrowRight" && e.key !== "Home" && e.key !== "End") e.preventDefault(); }} />}
-              <button className="modal-donate-submit">Donate Now</button>
-            </div>
-          )}
         </div>
         {showConfirm && (
           <div className="modal-confirm-overlay" onClick={handleCancel}>
