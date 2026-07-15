@@ -235,7 +235,7 @@ const Home = () => {
                   name="givebutter"
                   title="givebutter-iframe"
                   src={activeCase.givebutter_url.replace("https://givebutter.com/", "https://givebutter.com/embed/c/")}
-                  style={{ width: "100%", height: "585px", border: "none", overflow: "hidden" }}
+                  style={{ width: "100%", height: "600px", border: "none", overflow: "hidden" }}
                   allowpaymentrequest="true"
                   allow="payment"
                 />

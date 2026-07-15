@@ -662,7 +662,11 @@ const Admin = () => {
                 </span>
               </div>
 
-              {filteredCases.length > 0 && (
+              {loading ? (
+                <p style={{ textAlign: "center", padding: "40px", color: "rgba(0,0,0,0.5)" }}>
+                  Loading cases...
+                </p>
+              ) : filteredCases.length > 0 ? (
                 <div
                   style={{
                     display: "flex",
@@ -688,8 +692,7 @@ const Admin = () => {
                     </div>
                   ))}
                 </div>
-              )}
-              {filteredCases.length === 0 && cases.length > 0 && (
+              ) : (
                 <p className="admin-tab-placeholder">No cases match your search</p>
               )}
             </div>
@@ -705,7 +708,11 @@ const Admin = () => {
                 </button>
               </div>
 
-              {team.length > 0 && (
+              {loading ? (
+                <p style={{ textAlign: "center", padding: "40px", color: "rgba(0,0,0,0.5)" }}>
+                  Loading team members...
+                </p>
+              ) : team.length > 0 ? (
                 <div
                   style={{
                     display: "flex",
@@ -728,6 +735,8 @@ const Admin = () => {
                     />
                   ))}
                 </div>
+              ) : (
+                <p className="admin-tab-placeholder">No team members yet.</p>
               )}
             </div>
           )}
@@ -1057,18 +1066,6 @@ const Admin = () => {
                 placeholder="Enter description..."
               />
             </div>
-            {editModal.type === "case" && editModal.item.givebutter_url && (
-              <div className="admin-field" style={{ marginBottom: "12px" }}>
-                <iframe
-                  name="givebutter"
-                  title="givebutter-iframe"
-                  src={editModal.item.givebutter_url.replace("https://givebutter.com/", "https://givebutter.com/embed/c/")}
-                  style={{ width: "100%", height: "585px", border: "none", overflow: "hidden" }}
-                  allowpaymentrequest="true"
-                  allow="payment"
-                />
-              </div>
-            )}
             <div className="admin-edit-modal-buttons">
               <button className="admin-btn admin-btn-danger" onClick={() => requestDelete(editModal.type, editModal.item.id, editModal.type === "case" ? editModal.item.title || editModal.item.name : editModal.item.name)}>
                 <i className="fas fa-trash" style={{ marginRight: "6px" }}></i>Delete
