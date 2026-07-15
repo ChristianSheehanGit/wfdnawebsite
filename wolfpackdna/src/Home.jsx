@@ -100,13 +100,13 @@ const Home = () => {
 
               {open && (
                 <div className="dropdown">
-                  <a href="/#/inquiry/law-enforcement" className="dropdown-item"
+                  <a href="/inquiry/law-enforcement" className="dropdown-item"
                     style={{ transition: "background 0.1s ease" }}
                     onMouseEnter={e => e.currentTarget.style.background = "rgb(46, 108, 114)"}
                     onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
                     Law Enforcement
                   </a>
-                  <a href="/#/inquiry/genetic-genealogy" className="dropdown-item"
+                  <a href="/inquiry/genetic-genealogy" className="dropdown-item"
                     style={{ transition: "background 0.1s ease" }}
                     onMouseEnter={e => e.currentTarget.style.background = "rgb(46, 108, 114)"}
                     onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
@@ -147,13 +147,13 @@ const Home = () => {
 
               {open && (
                 <div className="dropdown">
-                  <a href="/#/inquiry/law-enforcement" className="dropdown-item"
+                  <a href="/inquiry/law-enforcement" className="dropdown-item"
                     style={{ transition: "background 0.1s ease" }}
                     onMouseEnter={e => e.currentTarget.style.background = "rgb(46, 108, 114)"}
                     onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
                     Law Enforcement
                   </a>
-                  <a href="/#/inquiry/genetic-genealogy" className="dropdown-item"
+                  <a href="/inquiry/genetic-genealogy" className="dropdown-item"
                     style={{ transition: "background 0.1s ease" }}
                     onMouseEnter={e => e.currentTarget.style.background = "rgb(46, 108, 114)"}
                     onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
@@ -170,7 +170,7 @@ const Home = () => {
       <div className="section-recent-cases">
         <div className="recent-cases-header">
           <h2 style={{fontFamily:"font", fontWeight: "bold"}} className="recent-cases-title">Recent Cases</h2>
-          <a href="/#/cases" className="see-all-link">See All Cases →</a>
+          <a href="/cases" className="see-all-link">See All Cases →</a>
         </div>
         <div className="recent-cases-grid">
           {recentCases.slice(0, isMobile ? 3 : 4).map((c) => (
@@ -192,7 +192,7 @@ const Home = () => {
         <div className="left">
           <p style={{width:"80%", textAlign: "center", fontWeight: "bold"}}>About Us</p>
           <p style={{width:"80%", marginBottom: "10px"}}>WOLF PACK DNA’s mission is to harness the power of genetic genealogy to provide answers to those seeking their biological origins, deliver leads to law enforcement in cases of unidentified human remains and unknown offenders of violent crimes, and assist in exonerating the wrongly convicted. We endeavor to make a profound impact on the lives of those we serve, promoting justice, dignity, healing, and understanding in every case.</p>
-          <button onClick={() => window.location.href = "/#/team"} className="inq-btn">
+          <button onClick={() => window.location.href = "/team"} className="inq-btn">
             Meet the Team
           </button>
         </div>
