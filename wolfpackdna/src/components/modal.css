@@ -33,6 +33,7 @@
 
 .modal-wide {
   max-width: 750px;
+  height: 750px;
 }
 
 .modal-header {
@@ -40,7 +41,7 @@
   top: 0;
   z-index: 10;
   background: rgba(216, 216, 216, 0.5);
-  padding: 8px 32px 0 32px;
+  padding: 12px 32px 4px 32px;
 }
 
 /* Title text at the top of the sticky header bar: keep an 8px gap below it
@@ -53,8 +54,105 @@
 }
 
 .modal-body {
-  padding: 16px 32px 32px 32px;
+  padding: 16px 32px 16px 32px;
   overflow-y: auto;
+  /* Fill the remaining height of the modal so children (e.g. the givebutter
+     full-screen view) can size themselves against a definite height. */
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* When the givebutter full-screen view is shown, the embed's own iframe
+   scrolls internally, so the modal body itself must NOT scroll and must lay
+   its children out as a column so the full-screen view can fill the height.
+   This keeps the bar pinned flush beneath the original modal header with no
+   double scrollbar, while the modal keeps its normal height. */
+.modal-body:has(.givebutter-fullscreen) {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0 32px;
+}
+
+/* Givebutter full-screen view inside a modal: fills the modal body height
+   (flex: 1) and breaks out of the side padding so it spans the full width.
+   Laid out as a flex column so the bar stays at the very top and the iframe
+   flex-grows to fill the remaining space. */
+.modal-body .givebutter-fullscreen {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin: 0 -32px;
+  display: flex;
+  flex-direction: column;
+}
+
+.givebutter-bar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 32px;
+  background: rgba(216, 216, 216, 0.5);
+}
+
+.givebutter-bar button {
+  background: none;
+  border: none;
+  font-family: font;
+  font-size: 17.5px;
+  color: rgba(0, 0, 0, 0.7);
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.givebutter-bar a {
+  font-family: font;
+  font-size: 17.5px;
+  color: var(--accent) !important;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.givebutter-fullscreen iframe {
+  /* Force the iframe to flex-grow and fill the remaining modal height
+     instead of using the pixel height the givebutter postMessage resizer
+     sets inline on it. */
+  height:554.45px;
+  min-height: 0;
+  width: 100% !important;
+  display: block;
+  border: none;
+}
+
+/* "Donate with Givebutter" button shown in the case details view. Sized to
+   its text only (not full width) with white text. align-self keeps it from
+   stretching when the parent is a flex column (e.g. .admin-edit-modal). */
+.givebutter-donate-btn {
+  display: inline-block;
+  align-self: flex-start;
+  margin-top: 16px;
+  width: auto;
+  padding: 9px 18px;
+  border: none;
+  background: #569ea5;
+  font-family: font;
+  font-size: 17.5px;
+  font-weight: normal;
+  color: #fff !important;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+  align-self:center;
+}
+
+.givebutter-donate-btn:hover {
+  background: rgb(53, 123, 130);
+  transform: translateY(-1px);
+}
+
+.givebutter-donate-btn:active {
+  transform: scale(0.98);
 }
 
 /* Hyperlinks inside modals use the site's blue accent color. */
@@ -67,18 +165,22 @@
   color: #3f959c;
 }
 
-/* Enforce the site's font face, size and color on ALL content rendered inside
+/* Enforce the site's font face and size on ALL content rendered inside
    modals, including HTML injected via dangerouslySetInnerHTML (e.g. the
-   preview modals). This overrides any inline styles (font-family, font-size,
-   color) carried over from pasted external content so every modal throughout
-   the site renders uniformly in the "font" face at 17.5px, rgba(0,0,0,0.7). */
+   preview modals). This overrides any inline styles (font-family, font-size)
+   carried over from pasted external content so every modal throughout the
+   site renders uniformly in the "font" face at 17.5px. Color is intentionally
+   NOT enforced here so component-specific colors (e.g. white button text)
+   are preserved. */
 .modal-body,
 .modal-body * {
   font-family: font !important;
   font-size: 17.5px !important;
-  color: rgba(0, 0, 0, 0.7) !important;
 }
 
+.modal-body span {
+  color: rgba(0, 0, 0, 0.7) !important;
+}
 /* Preserve link accent color inside modal content. */
 .modal-body a {
   color: var(--accent) !important;
@@ -113,7 +215,7 @@
 
 .modal-close {
   position: absolute;
-  top: 8px;
+  top: 10px;
   right: 16px;
   background: none;
   border: none;
@@ -121,7 +223,7 @@
   cursor: pointer;
   line-height: 1;
   transition: opacity 0.1s;
-  color: black;
+  color: rgba(0, 0, 0, 0.7);
 }
 
 .modal-donate {

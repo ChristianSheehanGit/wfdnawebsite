@@ -163,6 +163,12 @@ const Admin = () => {
   const [editModal, setEditModal] = useState(null); // { type: "case" | "team", item: {...} }
   const [deleteConfirm, setDeleteConfirm] = useState(null); // { type: "case" | "team", id, name }
   const [previewItem, setPreviewItem] = useState(null); // { type: "case" | "team", item: {...} }
+  const [showGivebutter, setShowGivebutter] = useState(false);
+
+  // Reset the Givebutter full-screen view whenever the preview modal closes.
+  useEffect(() => {
+    if (!previewItem) setShowGivebutter(false);
+  }, [previewItem]);
 
   // Edit modal fields
   const [editTitle, setEditTitle] = useState("");
@@ -1120,11 +1126,11 @@ const Admin = () => {
       )}
 
       {/* Preview Modal */}
-      <Modal isOpen={!!previewItem} onClose={() => setPreviewItem(null)} wide={previewItem?.type === "case"} stickyHeader={
+      <Modal isOpen={!!previewItem} onClose={() => setPreviewItem(null)} wide stickyHeader={
         previewItem && previewItem.type === "case" ? (
-          <div style={{ position: "relative", margin: "0 0 12px 0" }}>
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "8px", position: "relative" }}>
             <p style={{ fontWeight: "bold", fontSize: "17.5px", margin: 0 }}>{previewItem.item.title || previewItem.item.name}</p>
-            {previewItem.item.live && <span style={{ position: "absolute", left: "0", top: "0", background: "rgba(192, 57, 43)", color: "#fff", fontSize: "12px", fontWeight: "bold", padding: "0px 8px" }}>LIVE</span>}
+            {previewItem.item.live && <span style={{ position: "absolute", left: "0", background: "#d32f2f", color: "#fff", fontSize: "12px", fontWeight: "bold", padding: "0px 8px" }}>LIVE</span>}
           </div>
         ) : previewItem && previewItem.type === "team" ? (
           <p style={{ fontWeight: "bold", fontSize: "17.5px", margin: "0 0 12px 0" }}>{previewItem.item.name}</p>
@@ -1134,27 +1140,39 @@ const Admin = () => {
           <div className="admin-edit-modal">
             {previewItem.type === "case" ? (
               <>
-                <img
-                  src={previewItem.item.image}
-                  alt={previewItem.item.title || previewItem.item.name}
-                  style={{ height: "250px", objectFit: "cover", marginBottom: "12px", alignSelf: "center" }}
-                />
-                <div style={{ color: "rgba(0,0,0,0.7)", textAlign: "left", marginBottom: "12px" }}>
-                  <p style={{ margin: "0 0 4px 0" }}><b>Date:</b> {previewItem.item.date}</p>
-                  <p style={{ margin: 0 }}><b>Service:</b> {previewItem.item.category === "law-enforcement" ? "Law Enforcement" : "Genetic Genealogy"}</p>
-                </div>
-                <div style={{ color: "rgba(0,0,0,0.7)", textAlign: "left" }} dangerouslySetInnerHTML={{ __html: previewItem.item.description }} />
-                {previewItem.item.givebutter_url && (
-                  <div style={{ display: "flex", justifyContent: "center", marginTop: "16px" }}>
+                {showGivebutter && previewItem.item.givebutter_url ? (
+                  <div className="givebutter-fullscreen">
+                    <div className="givebutter-bar">
+                      <button onClick={() => setShowGivebutter(false)}>← Back</button>
+                      <a href={previewItem.item.givebutter_url} target="_blank" rel="noopener noreferrer">Open in new tab ↗</a>
+                    </div>
                     <iframe
                       name="givebutter"
                       title="givebutter-iframe"
                       src={previewItem.item.givebutter_url.replace("https://givebutter.com/", "https://givebutter.com/embed/c/")}
-                      style={{ width: "100%", height: "585px", border: "none", overflow: "hidden" }}
+                      style={{ width: "100%", border: "none", overflow: "hidden" }}
                       allowpaymentrequest="true"
                       allow="payment"
                     />
                   </div>
+                ) : (
+                  <>
+                    <img
+                      src={previewItem.item.image}
+                      alt={previewItem.item.title || previewItem.item.name}
+                      style={{ height: "250px", objectFit: "cover", marginBottom: "12px", alignSelf: "center" }}
+                    />
+                    <div style={{ color: "rgba(0,0,0,0.7)", textAlign: "left", marginBottom: "12px" }}>
+                      <p style={{ margin: "0 0 4px 0" }}><b>Date:</b> {previewItem.item.date}</p>
+                      <p style={{ margin: 0 }}><b>Service:</b> {previewItem.item.category === "law-enforcement" ? "Law Enforcement" : "Genetic Genealogy"}</p>
+                    </div>
+                    <div style={{ color: "rgba(0,0,0,0.7)", textAlign: "left" }} dangerouslySetInnerHTML={{ __html: previewItem.item.description }} />
+                    {previewItem.item.givebutter_url && (
+                      <button style={{color: "white"}} className="givebutter-donate-btn" onClick={() => setShowGivebutter(true)}>
+                        Donate with Givebutter
+                      </button>
+                    )}
+                  </>
                 )}
               </>
             ) : (

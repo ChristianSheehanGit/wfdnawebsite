@@ -14,6 +14,7 @@ const Home = () => {
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
   const [activeCase, setActiveCase] = useState(null);
+  const [showGivebutter, setShowGivebutter] = useState(false);
   const [selectedOneTime, setSelectedOneTime] = useState(null);
   const [selectedRecurring, setSelectedRecurring] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -54,6 +55,11 @@ const Home = () => {
   useEffect(() => {
     loadRecentCases();
   }, []);
+
+  // Reset the Givebutter full-screen view whenever the modal is closed.
+  useEffect(() => {
+    if (!activeCase) setShowGivebutter(false);
+  }, [activeCase]);
 
   async function loadRecentCases() {
     try {
@@ -217,20 +223,12 @@ const Home = () => {
       }>
         {activeCase && (
           <>
-            <img
-              src={activeCase.image}
-              alt={activeCase.title || activeCase.name}
-              style={{ height: "250px", objectFit: "cover", marginBottom: "12px", alignSelf: "center" }}
-            />
-            <div style={{ color: "rgba(0,0,0,0.7)", textAlign: "left", marginBottom: "12px" }}>
-              <p style={{ margin: "0 0 4px 0" }}><b>Date:</b> {activeCase.date}</p>
-              {activeCase.type && (
-                <p style={{ margin: 0 }}><b>Service:</b> {activeCase.type === "genetic-genealogy" ? "Genetic Genealogy" : "Law Enforcement"}</p>
-              )}
-            </div>
-            <div style={{ color: "rgba(0,0,0,0.7)", textAlign: "left" }} dangerouslySetInnerHTML={{ __html: activeCase.description }} />
-            {activeCase.givebutter_url && (
-              <div style={{ display: "flex", justifyContent: "center", marginTop: "16px" }}>
+            {showGivebutter && activeCase.givebutter_url ? (
+              <div className="givebutter-fullscreen">
+                <div className="givebutter-bar">
+                  <button onClick={() => setShowGivebutter(false)}>← Back</button>
+                  <a href={activeCase.givebutter_url} target="_blank" rel="noopener noreferrer">Open in new tab ↗</a>
+                </div>
                 <iframe
                   name="givebutter"
                   title="givebutter-iframe"
@@ -240,6 +238,26 @@ const Home = () => {
                   allow="payment"
                 />
               </div>
+            ) : (
+              <>
+                <img
+                  src={activeCase.image}
+                  alt={activeCase.title || activeCase.name}
+                  style={{ height: "250px", objectFit: "cover", marginBottom: "12px", alignSelf: "center" }}
+                />
+                <div style={{ color: "rgba(0,0,0,0.7)", textAlign: "left", marginBottom: "12px" }}>
+                  <p style={{ margin: "0 0 4px 0" }}><b>Date:</b> {activeCase.date}</p>
+                  {activeCase.type && (
+                    <p style={{ margin: 0 }}><b>Service:</b> {activeCase.type === "genetic-genealogy" ? "Genetic Genealogy" : "Law Enforcement"}</p>
+                  )}
+                </div>
+                <div style={{ color: "rgba(0,0,0,0.7)", textAlign: "left" }} dangerouslySetInnerHTML={{ __html: activeCase.description }} />
+                {activeCase.givebutter_url && (
+                  <button className="givebutter-donate-btn" onClick={() => setShowGivebutter(true)}>
+                    Donate with Givebutter
+                  </button>
+                )}
+              </>
             )}
           </>
         )}
