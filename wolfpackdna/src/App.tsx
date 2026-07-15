@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import { initGivebutterResizer } from "./givebutter.js";
 import './App.css'
 import Home from "./Home.jsx";
 import Services from "./Services.jsx";
@@ -38,6 +39,11 @@ function PageTitle() {
 }
 
 function App() {
+  useEffect(() => {
+    const cleanup = initGivebutterResizer();
+    return cleanup;
+  }, []);
+
   return (
     <div
       className="App"

@@ -46,8 +46,8 @@ async function getCase(req, res) {
  */
 async function createCase(req, res) {
   try {
-    const { name, description, type, date, image, live } = req.body;
-    const newCase = new Case({ name, description, type, date, image, live });
+    const { name, description, type, date, image, live, givebutter_url } = req.body;
+    const newCase = new Case({ name, description, type, date, image, live, givebutter_url });
 
     if (!newCase.isValid()) {
       return res.status(400).json({ success: false, error: 'Invalid case data. Name, description, and type are required.' });
@@ -60,6 +60,7 @@ async function createCase(req, res) {
       date: newCase.date,
       image: newCase.image,
       live: newCase.live,
+      givebutter_url: newCase.givebutter_url,
     });
 
     res.status(201).json({ success: true, data: { ...newCase, id } });
@@ -75,7 +76,7 @@ async function createCase(req, res) {
  */
 async function updateCase(req, res) {
   try {
-    const { name, description, type, date, image, live } = req.body;
+    const { name, description, type, date, image, live, givebutter_url } = req.body;
     const updateData = {};
     if (name !== undefined) updateData.name = name;
     if (description !== undefined) updateData.description = description;
@@ -83,6 +84,7 @@ async function updateCase(req, res) {
     if (date !== undefined) updateData.date = date;
     if (image !== undefined) updateData.image = image;
     if (live !== undefined) updateData.live = live;
+    if (givebutter_url !== undefined) updateData.givebutter_url = givebutter_url;
 
     await db.update(TABLE, req.params.id, updateData);
     res.json({ success: true, message: 'Case updated' });

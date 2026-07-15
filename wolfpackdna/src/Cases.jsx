@@ -167,7 +167,7 @@ const Cases = () => {
         </div>
       )}
 
-      <Modal isOpen={!!activeCase} onClose={() => setActiveCase(null)} showDonate wide stickyHeader={
+      <Modal isOpen={!!activeCase} onClose={() => setActiveCase(null)} showDonate={activeCase && !activeCase.givebutter_url} wide stickyHeader={
         activeCase && (
           <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "8px", position: "relative" }}>
             <p style={{ fontWeight: "bold", fontSize: "17.5px", margin: 0 }}>{activeCase.title || activeCase.name}</p>
@@ -189,6 +189,18 @@ const Cases = () => {
               )}
             </div>
             <div style={{ color: "rgba(0,0,0,0.7)", textAlign: "left" }} dangerouslySetInnerHTML={{ __html: activeCase.description }} />
+            {activeCase.givebutter_url && (
+              <div style={{ display: "flex", justifyContent: "center", marginTop: "16px" }}>
+                <iframe
+                  src={activeCase.givebutter_url.replace("https://givebutter.com/", "https://givebutter.com/embed/c/")}
+                  title="Givebutter Donation"
+                  style={{ width: "90%", border: "none" }}
+                  height="2000"
+                  scrolling="no"
+                  allow="payment"
+                />
+              </div>
+            )}
           </>
         )}
       </Modal>

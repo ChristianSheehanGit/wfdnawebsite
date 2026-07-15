@@ -75,6 +75,7 @@ const Admin = () => {
   const [caseImagePreview, setCaseImagePreview] = useState("");
   const [caseCategory, setCaseCategory] = useState("law-enforcement");
   const [caseLive, setCaseLive] = useState(false);
+  const [caseGivebutterUrl, setCaseGivebutterUrl] = useState("");
 
   // Cases search/filter/sort state
   const [caseFilter, setCaseFilter] = useState("all");
@@ -170,6 +171,7 @@ const Admin = () => {
   const [editImagePreview, setEditImagePreview] = useState("");
   const [editCategory, setEditCategory] = useState("law-enforcement");
   const [editLive, setEditLive] = useState(false);
+  const [editGivebutterUrl, setEditGivebutterUrl] = useState("");
 
   // Dirty tracking for unsaved changes warning
   const [addDirty, setAddDirty] = useState(false);
@@ -267,6 +269,7 @@ const Admin = () => {
       setCaseImageName("");
       setCaseCategory("law-enforcement");
       setCaseLive(false);
+      setCaseGivebutterUrl("");
     } else {
       setTeamName("");
       setTeamRole("");
@@ -344,6 +347,7 @@ const Admin = () => {
         image: imageUrl,
         type: caseCategory,
         live: caseLive,
+        givebutter_url: caseGivebutterUrl.trim() || undefined,
       });
       setCases([...cases, newCase]);
       closeAddModal();
@@ -392,6 +396,7 @@ const Admin = () => {
       setEditImagePreview(item.image || "");
       setEditCategory(item.category || "law-enforcement");
       setEditLive(item.live || false);
+      setEditGivebutterUrl(item.givebutter_url || "");
     } else {
       setEditTitle(item.name || "");
       setEditDate(item.role || "");
@@ -408,6 +413,7 @@ const Admin = () => {
     setEditImagePreview("");
     setEditCategory("law-enforcement");
     setEditLive(false);
+    setEditGivebutterUrl("");
   };
 
   const handleEditImageUpload = (e) => {
@@ -440,10 +446,11 @@ const Admin = () => {
           image: editImagePreview,
           type: editCategory,
           live: editLive,
+          givebutter_url: editGivebutterUrl.trim() || undefined,
         });
         setCases(cases.map((c) =>
           c.id === editModal.item.id
-            ? { ...c, name: editTitle.trim(), date: editDate.trim(), description: editDescription, image: editImagePreview, type: editCategory, live: editLive }
+            ? { ...c, name: editTitle.trim(), date: editDate.trim(), description: editDescription, image: editImagePreview, type: editCategory, live: editLive, givebutter_url: editGivebutterUrl.trim() }
             : c
         ));
       } else {
@@ -834,6 +841,16 @@ const Admin = () => {
               <option value="genetic-genealogy">Genetic Genealogy</option>
             </select>
           </div>
+          <div className="admin-field admin-field-horizontal" style={{ marginBottom: "12px" }}>
+            <label className="admin-label">Givebutter Link</label>
+            <input
+              className="admin-input"
+              type="text"
+              placeholder="e.g. https://givebutter.com/PescaderoStateBeachJohnDoe"
+              value={caseGivebutterUrl}
+              onChange={(e) => { setCaseGivebutterUrl(e.target.value); setAddDirty(true); }}
+            />
+          </div>
           <div className="admin-field" style={{ marginBottom: "12px" }}>
             <label className="admin-label">Image</label>
             <input
@@ -996,6 +1013,16 @@ const Admin = () => {
                   <option value="genetic-genealogy">Genetic Genealogy</option>
                 </select>
               </div>
+              <div className="admin-field admin-field-horizontal" style={{ marginBottom: "12px" }}>
+                <label className="admin-label">Givebutter Link</label>
+                <input
+                  className="admin-input"
+                  type="text"
+                  placeholder="e.g. https://givebutter.com/PescaderoStateBeachJohnDoe"
+                  value={editGivebutterUrl}
+                  onChange={(e) => { setEditGivebutterUrl(e.target.value); setEditDirty(true); }}
+                />
+              </div>
               </>
             )}
             <div className="admin-field" style={{ marginBottom: "12px" }}>
@@ -1108,6 +1135,18 @@ const Admin = () => {
                   <p style={{ margin: 0 }}><b>Service:</b> {previewItem.item.category === "law-enforcement" ? "Law Enforcement" : "Genetic Genealogy"}</p>
                 </div>
                 <div style={{ color: "rgba(0,0,0,0.7)", textAlign: "left" }} dangerouslySetInnerHTML={{ __html: previewItem.item.description }} />
+                {previewItem.item.givebutter_url && (
+                  <div style={{ display: "flex", justifyContent: "center", marginTop: "16px" }}>
+                    <iframe
+                      src={previewItem.item.givebutter_url.replace("https://givebutter.com/", "https://givebutter.com/embed/c/")}
+                      title="Givebutter Donation"
+                      style={{ width: "90%", border: "none" }}
+                      height="2000"
+                      scrolling="no"
+                      allow="payment"
+                    />
+                  </div>
+                )}
               </>
             ) : (
               <>
