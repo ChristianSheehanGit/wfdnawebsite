@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import "./modal.css";
 
-const Modal = ({ isOpen, onClose, children, wide = false, stickyHeader = null, dirty = false, onDiscard, onSaveAndClose }) => {
+const Modal = ({ isOpen, onClose, children, wide = false, stickyHeader = null, dirty = false, onDiscard, onSaveAndClose, className = "" }) => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [pendingAction, setPendingAction] = useState(null);
 
@@ -56,7 +56,7 @@ const Modal = ({ isOpen, onClose, children, wide = false, stickyHeader = null, d
           <button className="modal-close" onClick={handleClose}>×</button>
           {stickyHeader}
         </div>
-        <div className="modal-body">
+        <div className={`modal-body ${className}`}>
           {children}
         </div>
         {showConfirm && (

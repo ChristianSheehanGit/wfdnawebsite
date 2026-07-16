@@ -17,6 +17,55 @@ const Cases = () => {
   const [sortOpen, setSortOpen] = useState(false);
   const sortDropdownRef = useRef(null);
   const [loading, setLoading] = useState(true);
+  const [viewerImage, setViewerImage] = useState(null);
+
+  // Parse date strings into proper Date objects for sorting.
+  // Handles: "2022" (Jan 1, 2022), "March 2022" (Mar 1, 2022), "March 22, 2022" (Mar 22, 2022)
+  const parseDate = (dateStr) => {
+    if (!dateStr) return new Date(0); // Default to epoch for empty/invalid dates
+    
+    const monthNames = {
+      jan: 0, january: 0,
+      feb: 1, february: 1,
+      mar: 2, march: 2,
+      apr: 3, april: 3,
+      may: 4, may: 4,
+      jun: 5, june: 5,
+      jul: 6, july: 6,
+      aug: 7, august: 7,
+      sep: 8, september: 8,
+      sept: 8,
+      oct: 9, october: 9,
+      nov: 10, november: 10,
+      dec: 11, december: 11
+    };
+    
+    const str = dateStr.trim().toLowerCase();
+    
+    // Year only: "2022" -> January 1, 2022
+    if (/^\d{4}$/.test(str)) {
+      return new Date(parseInt(str), 0, 1);
+    }
+    
+    // Month Year: "march 2022" -> March 1, 2022
+    const monthYearMatch = str.match(/^(\w+)\s+(\d{4})$/);
+    if (monthYearMatch) {
+      const monthName = monthYearMatch[1];
+      const year = parseInt(monthYearMatch[2]);
+      const month = monthNames[monthName];
+      if (month !== undefined) {
+        return new Date(year, month, 1);
+      }
+    }
+    
+    // Full date: "March 22, 2022" or standard date formats
+    const parsed = new Date(dateStr);
+    if (!isNaN(parsed.getTime())) {
+      return parsed;
+    }
+    
+    return new Date(0); // Fallback for unrecognized formats
+  };
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -56,23 +105,23 @@ const Cases = () => {
     let result = [...cases];
 
     if (filter !== "all") {
-      result = result.filter((c) => c.category === filter);
+      result = result.filter((c) => (c.type || c.category) === filter);
     }
 
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       result = result.filter(
         (c) =>
-          c.title.toLowerCase().includes(q) ||
-          c.date.toLowerCase().includes(q) ||
-          c.description.toLowerCase().includes(q) ||
-          categoryLabel(c.category).toLowerCase().includes(q)
+          (c.title || "").toLowerCase().includes(q) ||
+          (c.date || "").toLowerCase().includes(q) ||
+          (c.description || "").toLowerCase().includes(q) ||
+          categoryLabel(c.type || c.category).toLowerCase().includes(q)
       );
     }
 
     result.sort((a, b) => {
-      const dateA = new Date(a.date);
-      const dateB = new Date(b.date);
+      const dateA = parseDate(a.date);
+      const dateB = parseDate(b.date);
       return sortOrder === "newest" ? dateB - dateA : dateA - dateB;
     });
 
@@ -186,8 +235,8 @@ const Cases = () => {
             {showGivebutter && activeCase.givebutter_url ? (
               <div className="givebutter-fullscreen">
                 <div className="givebutter-bar">
-                  <button onClick={() => setShowGivebutter(false)}>← Back</button>
-                  <a href={activeCase.givebutter_url} target="_blank" rel="noopener noreferrer">Open in new tab ↗</a>
+                  <button onClick={() => setShowGivebutter(false)}><i className="fas fa-arrow-left"></i></button>
+                  <a href={activeCase.givebutter_url} target="_blank" rel="noopener noreferrer"><i className="fa-solid fa-arrow-up-right-from-square"></i></a>
                 </div>
                 <iframe
                   name="givebutter"
@@ -203,7 +252,9 @@ const Cases = () => {
                 <img
                   src={activeCase.image}
                   alt={activeCase.title || activeCase.name}
+                  className="modal-image-clickable"
                   style={{ height: "250px", objectFit: "cover", marginBottom: "12px", alignSelf: "center" }}
+                  onClick={() => setViewerImage(activeCase.image)}
                 />
                 <div style={{ color: "rgba(0,0,0,0.7)", textAlign: "left", marginBottom: "12px" }}>
                   <p style={{ margin: "0 0 4px 0" }}><b>Date:</b> {activeCase.date}</p>
@@ -214,7 +265,7 @@ const Cases = () => {
                 <div style={{ color: "rgba(0,0,0,0.7)", textAlign: "left" }} dangerouslySetInnerHTML={{ __html: activeCase.description }} />
                 {activeCase.givebutter_url && (
                   <button style={{color: "white"}} className="givebutter-donate-btn" onClick={() => setShowGivebutter(true)}>
-                    Donate with Givebutter
+                    <i className="fas fa-dollar-sign" style={{marginRight: "6px"}}></i>Donate with Givebutter
                   </button>
                 )}
               </>
@@ -222,6 +273,14 @@ const Cases = () => {
           </>
         )}
       </Modal>
+
+      {/* Full-resolution image viewer */}
+      {viewerImage && (
+        <div className="image-viewer-overlay" onClick={() => setViewerImage(null)}>
+          <img src={viewerImage} alt="Full resolution" onClick={(e) => e.stopPropagation()} />
+          <button className="image-viewer-close" onClick={() => setViewerImage(null)}>×</button>
+        </div>
+      )}
 
       <Footer />
     </div>

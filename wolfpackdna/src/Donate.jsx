@@ -29,7 +29,7 @@ const Donate = () => {
                <button className={`amount-btn ${selectedOneTime === "$100" ? "amount-selected" : ""}`} onClick={() => setSelectedOneTime("$100")}>$100</button>
                <button className={`amount-btn amount-custom ${selectedOneTime === "Custom" ? "amount-selected" : ""}`} onClick={() => setSelectedOneTime("Custom")}>Custom</button>
              </div>
-             <button className="donate-submit-btn">Donate Now</button>
+              <button className="donate-submit-btn"><i className="fas fa-dollar-sign" style={{marginRight: "6px"}}></i>Donate Now</button>
           </div>
 
           {/* Monthly Donation */}
@@ -45,7 +45,7 @@ const Donate = () => {
                <button className={`amount-btn ${selectedRecurring === "$50/mo" ? "amount-selected" : ""}`} onClick={() => setSelectedRecurring("$50/mo")}>$50/mo</button>
                <button className={`amount-btn amount-custom ${selectedRecurring === "Custom" ? "amount-selected" : ""}`} onClick={() => setSelectedRecurring("Custom")}>Custom</button>
              </div>
-             <button className="donate-submit-btn">Subscribe Monthly</button>
+              <button className="donate-submit-btn"><i className="fas fa-dollar-sign" style={{marginRight: "6px"}}></i>Subscribe Monthly</button>
           </div>
         </div>
       </div>

@@ -52,14 +52,31 @@
 .modal-header > * {
   margin-bottom: 8px !important;
 }
+.modal-header p {
+  max-width:70%;
+}
+.modal-header span {
+  left: -10px !important;
+}
+
+.modal-header .fa-solid,
+.modal-header .fa-brands {
+  font-family: "Font Awesome 6 Free" !important;
+  font-weight: 900 !important;
+}
 
 .modal-body {
-  padding: 16px 32px 16px 32px;
+  padding: 16px 24px 16px 24px;
   overflow-y: auto;
   /* Fill the remaining height of the modal so children (e.g. the givebutter
      full-screen view) can size themselves against a definite height. */
   flex: 1 1 auto;
   min-height: 0;
+}
+
+/* No padding variant for modals that need edge-to-edge content (e.g. donations) */
+.modal-body.no-padding {
+  padding: 0;
 }
 
 /* When the givebutter full-screen view is shown, the embed's own iframe
@@ -115,6 +132,12 @@
   cursor: pointer;
 }
 
+.givebutter-bar a > .fa-solid,
+.givebutter-bar a > .fa-brands {
+  font-family: "Font Awesome 6 Free" !important;
+  font-weight: 900 !important;
+}
+
 .givebutter-fullscreen iframe {
   /* Force the iframe to flex-grow and fill the remaining modal height
      instead of using the pixel height the givebutter postMessage resizer
@@ -136,7 +159,7 @@
   width: auto;
   padding: 9px 18px;
   border: none;
-  background: #569ea5;
+  background: #6eaa58;
   font-family: font;
   font-size: 17.5px;
   font-weight: normal;
@@ -147,7 +170,7 @@
 }
 
 .givebutter-donate-btn:hover {
-  background: rgb(53, 123, 130);
+  background: #5a8f46;
   transform: translateY(-1px);
 }
 
@@ -176,6 +199,19 @@
 .modal-body * {
   font-family: font !important;
   font-size: 17.5px !important;
+}
+
+/* Preserve FontAwesome icon font inside modals — the universal font-family
+   override above would otherwise break icon rendering. */
+.modal-body .fas,
+.modal-body .far,
+.modal-body .fa-solid {
+  font-family: "Font Awesome 6 Free" !important;
+  font-size: inherit !important;
+}
+.modal-body .fab,
+.modal-body .fa-brands {
+  font-family: "Font Awesome 6 Brands" !important;
 }
 
 .modal-body span {
@@ -215,7 +251,7 @@
 
 .modal-close {
   position: absolute;
-  top: 10px;
+  top: 9px;
   right: 16px;
   background: none;
   border: none;
@@ -344,4 +380,51 @@
 .custom-amount-input:focus {
   outline: none;
   box-shadow: 0 0 0 2px rgba(63, 149, 156), 0 0 0 4px rgba(86, 158, 165, 0.15);
+}
+
+/* ── Full‑screen image viewer overlay ── */
+.image-viewer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5000;
+  padding: 24px;
+}
+
+.image-viewer-overlay img {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+  cursor: default;
+}
+
+.image-viewer-close {
+  position: fixed;
+  top: 16px;
+  right: 24px;
+  background: none;
+  border: none;
+  font-size: 32px;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  z-index: 5001;
+  line-height: 1;
+  transition: color 0.15s ease;
+}
+
+.image-viewer-close:hover {
+  color: #fff;
+}
+
+/* Clickable modal image — shows pointer cursor. */
+.modal-body img.modal-image-clickable {
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+.modal-body img.modal-image-clickable:hover {
+  opacity: 0.85;
 }

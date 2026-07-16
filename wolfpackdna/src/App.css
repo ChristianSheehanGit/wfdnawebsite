@@ -422,6 +422,14 @@ p {
   background-color: rgba(216, 216, 216, 0.5);
 }
 
+.section-donate {
+  display: flex;
+  align-items: center;
+  padding: 40px;
+  gap: 40px;
+  background-color: rgb(255, 255, 255);
+}
+
 @media (max-width: 768px) {
   .section-about {
     flex-direction: column !important;

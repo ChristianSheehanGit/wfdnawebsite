@@ -29,6 +29,54 @@ function getTextContent(html) {
   return div.textContent || div.innerText || "";
 }
 
+// Parse date strings into proper Date objects for sorting.
+// Handles: "2022" (Jan 1, 2022), "March 2022" (Mar 1, 2022), "March 22, 2022" (Mar 22, 2022)
+function parseDate(dateStr) {
+  if (!dateStr) return new Date(0);
+  
+  const monthNames = {
+    jan: 0, january: 0,
+    feb: 1, february: 1,
+    mar: 2, march: 2,
+    apr: 3, april: 3,
+    may: 4, may: 4,
+    jun: 5, june: 5,
+    jul: 6, july: 6,
+    aug: 7, august: 7,
+    sep: 8, september: 8,
+    sept: 8,
+    oct: 9, october: 9,
+    nov: 10, november: 10,
+    dec: 11, december: 11
+  };
+  
+  const str = dateStr.trim().toLowerCase();
+  
+  // Year only: "2022" -> January 1, 2022
+  if (/^\d{4}$/.test(str)) {
+    return new Date(parseInt(str), 0, 1);
+  }
+  
+  // Month Year: "march 2022" -> March 1, 2022
+  const monthYearMatch = str.match(/^(\w+)\s+(\d{4})$/);
+  if (monthYearMatch) {
+    const monthName = monthYearMatch[1];
+    const year = parseInt(monthYearMatch[2]);
+    const month = monthNames[monthName];
+    if (month !== undefined) {
+      return new Date(year, month, 1);
+    }
+  }
+  
+  // Full date: "March 22, 2022" or standard date formats
+  const parsed = new Date(dateStr);
+  if (!isNaN(parsed.getTime())) {
+    return parsed;
+  }
+  
+  return new Date(0);
+}
+
 // Native HTML5 drag-and-drop wrapper for a single team card on the admin page.
 function DraggableTeamCard({ member, onEdit, onClick, onDragStart, onDragOver, onDrop, isDragging }) {
   const style = {
@@ -127,23 +175,23 @@ const Admin = () => {
     let result = [...cases];
 
     if (caseFilter !== "all") {
-      result = result.filter((c) => c.category === caseFilter);
+      result = result.filter((c) => (c.type || c.category) === caseFilter);
     }
 
     if (caseSearchQuery.trim()) {
       const q = caseSearchQuery.toLowerCase();
       result = result.filter(
         (c) =>
-          c.title.toLowerCase().includes(q) ||
-          c.date.toLowerCase().includes(q) ||
-          c.description.toLowerCase().includes(q) ||
-          categoryLabel(c.category).toLowerCase().includes(q)
+          (c.title || "").toLowerCase().includes(q) ||
+          (c.date || "").toLowerCase().includes(q) ||
+          (c.description || "").toLowerCase().includes(q) ||
+          categoryLabel(c.type || c.category).toLowerCase().includes(q)
       );
     }
 
     result.sort((a, b) => {
-      const dateA = new Date(a.date);
-      const dateB = new Date(b.date);
+      const dateA = parseDate(a.date);
+      const dateB = parseDate(b.date);
       return caseSortOrder === "newest" ? dateB - dateA : dateA - dateB;
     });
 
@@ -164,6 +212,7 @@ const Admin = () => {
   const [deleteConfirm, setDeleteConfirm] = useState(null); // { type: "case" | "team", id, name }
   const [previewItem, setPreviewItem] = useState(null); // { type: "case" | "team", item: {...} }
   const [showGivebutter, setShowGivebutter] = useState(false);
+  const [viewerImage, setViewerImage] = useState(null);
 
   // Reset the Givebutter full-screen view whenever the preview modal closes.
   useEffect(() => {
@@ -400,7 +449,7 @@ const Admin = () => {
       setEditDate(item.date || "");
       setEditDescription(item.description || "");
       setEditImagePreview(item.image || "");
-      setEditCategory(item.category || "law-enforcement");
+      setEditCategory(item.type || "law-enforcement");
       setEditLive(item.live || false);
       setEditGivebutterUrl(item.givebutter_url || "");
     } else {
@@ -1126,7 +1175,7 @@ const Admin = () => {
       )}
 
       {/* Preview Modal */}
-      <Modal isOpen={!!previewItem} onClose={() => setPreviewItem(null)} wide stickyHeader={
+      <Modal isOpen={!!previewItem} onClose={() => setPreviewItem(null)} wide={previewItem?.type === "case"} stickyHeader={
         previewItem && previewItem.type === "case" ? (
           <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "8px", position: "relative" }}>
             <p style={{ fontWeight: "bold", fontSize: "17.5px", margin: 0 }}>{previewItem.item.title || previewItem.item.name}</p>
@@ -1143,8 +1192,8 @@ const Admin = () => {
                 {showGivebutter && previewItem.item.givebutter_url ? (
                   <div className="givebutter-fullscreen">
                     <div className="givebutter-bar">
-                      <button onClick={() => setShowGivebutter(false)}>← Back</button>
-                      <a href={previewItem.item.givebutter_url} target="_blank" rel="noopener noreferrer">Open in new tab ↗</a>
+                      <button onClick={() => setShowGivebutter(false)}><i className="fas fa-arrow-left"></i></button>
+                      <a href={previewItem.item.givebutter_url} target="_blank" rel="noopener noreferrer"><i className="fa-solid fa-arrow-up-right-from-square"></i></a>
                     </div>
                     <iframe
                       name="givebutter"
@@ -1160,16 +1209,18 @@ const Admin = () => {
                     <img
                       src={previewItem.item.image}
                       alt={previewItem.item.title || previewItem.item.name}
+                      className="modal-image-clickable"
                       style={{ height: "250px", objectFit: "cover", marginBottom: "12px", alignSelf: "center" }}
+                      onClick={() => setViewerImage(previewItem.item.image)}
                     />
                     <div style={{ color: "rgba(0,0,0,0.7)", textAlign: "left", marginBottom: "12px" }}>
                       <p style={{ margin: "0 0 4px 0" }}><b>Date:</b> {previewItem.item.date}</p>
-                      <p style={{ margin: 0 }}><b>Service:</b> {previewItem.item.category === "law-enforcement" ? "Law Enforcement" : "Genetic Genealogy"}</p>
+                      <p style={{ margin: 0 }}><b>Service:</b> {previewItem.item.type === "law-enforcement" ? "Law Enforcement" : "Genetic Genealogy"}</p>
                     </div>
                     <div style={{ color: "rgba(0,0,0,0.7)", textAlign: "left" }} dangerouslySetInnerHTML={{ __html: previewItem.item.description }} />
                     {previewItem.item.givebutter_url && (
                       <button style={{color: "white"}} className="givebutter-donate-btn" onClick={() => setShowGivebutter(true)}>
-                        Donate with Givebutter
+                        <i className="fas fa-dollar-sign" style={{marginRight: "6px"}}></i>Donate with Givebutter
                       </button>
                     )}
                   </>
@@ -1180,7 +1231,9 @@ const Admin = () => {
                 <img
                   src={previewItem.item.image}
                   alt={previewItem.item.name}
+                  className="modal-image-clickable"
                   style={{ height: "250px", objectFit: "cover", marginBottom: "12px", alignSelf: "center" }}
+                  onClick={() => setViewerImage(previewItem.item.image)}
                 />
                 <p style={{ margin: "0 0 4px 0", textAlign: "left" }}><b>Role:</b> {previewItem.item.role}</p>
                 <div style={{ color: "rgba(0,0,0,0.7)", textAlign: "left" }} dangerouslySetInnerHTML={{ __html: previewItem.item.description }} />
@@ -1189,6 +1242,14 @@ const Admin = () => {
           </div>
         )}
       </Modal>
+
+      {/* Full-resolution image viewer */}
+      {viewerImage && (
+        <div className="image-viewer-overlay" onClick={() => setViewerImage(null)}>
+          <img src={viewerImage} alt="Full resolution" onClick={(e) => e.stopPropagation()} />
+          <button className="image-viewer-close" onClick={() => setViewerImage(null)}>×</button>
+        </div>
+      )}
 
       <Footer />
     </div>

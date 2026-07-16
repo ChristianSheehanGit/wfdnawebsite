@@ -64,6 +64,17 @@
   color: rgba(0, 0, 0, 0.7) !important;
 }
 
+/* Preserve FontAwesome icon font inside rich text content areas. */
+.rich-text-content .fas,
+.rich-text-content .far,
+.rich-text-content .fab {
+  font-family: "Font Awesome 6 Free" !important;
+  font-size: inherit !important;
+}
+.rich-text-content .fab {
+  font-family: "Font Awesome 6 Brands" !important;
+}
+
 .rich-text-content:empty:before {
   content: attr(data-placeholder);
   color: rgba(0, 0, 0, 0.4);

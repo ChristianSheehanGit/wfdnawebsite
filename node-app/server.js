@@ -118,20 +118,33 @@ app.listen(PORT, () => {
   console.log(`Wolfpack DNA Admin API running on port ${PORT}`);
 
   // -----------------------------------------------------------------------
-  // Keep-alive: ping ourselves every 5 minutes to prevent cold starts on
+  // Keep-alive: periodically query the database to prevent cold starts on
   // hosting platforms that spin down idle instances (e.g. Render, Railway).
+  // This keeps the Firestore connection and OAuth2 token warm.
   // -----------------------------------------------------------------------
-  const KEEP_ALIVE_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
-  setInterval(async () => {
+  const KEEP_ALIVE_INTERVAL_MS = 2 * 60 * 1000; // 2 minutes
+  const keepAlive = async () => {
     try {
-      const url = `http://localhost:${PORT}/api/health`;
-      const response = await fetch(url);
-      const body = await response.json();
-      console.log(`[KeepAlive] ${body.status} @ ${body.timestamp}`);
+      // Query both collections to keep them warm
+      await Promise.all([
+        firestoreDb.findAll('cases').then(() => {
+          console.log('[KeepAlive] Cases collection queried successfully');
+        }),
+        firestoreDb.findAllOrdered('team').then(() => {
+          console.log('[KeepAlive] Team collection queried successfully');
+        }),
+      ]);
+      console.log(`[KeepAlive] All collections warmed at ${new Date().toISOString()}`);
     } catch (err) {
-      // Silently ignore — the server might be in the middle of shutting down
+      console.error('[KeepAlive] Warm-up failed:', err.message);
     }
-  }, KEEP_ALIVE_INTERVAL_MS);
+  };
 
-  console.log(`[KeepAlive] Will self-ping every ${KEEP_ALIVE_INTERVAL_MS / 1000}s to prevent cold starts.`);
+  // Initial warm-up on startup
+  keepAlive();
+
+  // Periodic warm-up
+  setInterval(keepAlive, KEEP_ALIVE_INTERVAL_MS);
+
+  console.log(`[KeepAlive] Will warm database every ${KEEP_ALIVE_INTERVAL_MS / 1000}s to prevent cold starts.`);
 });

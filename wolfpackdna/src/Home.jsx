@@ -7,7 +7,6 @@ import Modal from "./components/modal.jsx";
 import { useImages } from "./ImageContext.jsx";
 import { fetchCases } from "./api.js";
 import "./App.css";
-import "./donate.css";
 
 const Home = () => {
   const { getImage, failed, markFailed } = useImages();
@@ -15,10 +14,11 @@ const Home = () => {
   const dropdownRef = useRef(null);
   const [activeCase, setActiveCase] = useState(null);
   const [showGivebutter, setShowGivebutter] = useState(false);
-  const [selectedOneTime, setSelectedOneTime] = useState(null);
-  const [selectedRecurring, setSelectedRecurring] = useState(null);
+  const [showSiteDonate, setShowSiteDonate] = useState(false);
+  const [viewerImage, setViewerImage] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [recentCases, setRecentCases] = useState([]);
+  const [loadingCases, setLoadingCases] = useState(true);
   const location = useLocation();
 
   useEffect(() => {
@@ -62,12 +62,15 @@ const Home = () => {
   }, [activeCase]);
 
   async function loadRecentCases() {
+    setLoadingCases(true);
     try {
       const fetchedCases = await fetchCases();
       const sorted = [...fetchedCases].sort((a, b) => new Date(b.date) - new Date(a.date));
       setRecentCases(sorted.slice(0, 4));
     } catch (err) {
       console.error("Failed to load recent cases:", err);
+    } finally {
+      setLoadingCases(false);
     }
   }
 
@@ -178,18 +181,24 @@ const Home = () => {
           <h2 style={{fontFamily:"font", fontWeight: "bold"}} className="recent-cases-title">Recent Cases</h2>
           <a href="/cases" className="see-all-link">See All Cases →</a>
         </div>
-        <div className="recent-cases-grid">
-          {recentCases.slice(0, isMobile ? 3 : 4).map((c) => (
-            <Card
-              key={c.id}
-              image={c.image || `https://placehold.co/300x300/eee/999?text=Case+${c.id}`}
-              title={c.title || c.name}
-              subtitle={c.date}
-              onClick={() => setActiveCase(c)}
-              live={c.live}
-            />
-          ))}
-        </div>
+        {loadingCases ? (
+          <p style={{ textAlign: "center", padding: "40px", color: "rgba(0,0,0,0.5)" }}>
+            Loading cases...
+          </p>
+        ) : (
+          <div className="recent-cases-grid">
+            {recentCases.slice(0, isMobile ? 3 : 4).map((c) => (
+              <Card
+                key={c.id}
+                image={c.image || `https://placehold.co/300x300/eee/999?text=Case+${c.id}`}
+                title={c.title || c.name}
+                subtitle={c.date}
+                onClick={() => setActiveCase(c)}
+                live={c.live}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       {/* About */}
@@ -197,7 +206,7 @@ const Home = () => {
         {/* LEFT — text */}
         <div className="left">
           <p style={{width:"80%", textAlign: "center", fontWeight: "bold"}}>About Us</p>
-          <p style={{width:"80%", marginBottom: "10px"}}>WOLF PACK DNA’s mission is to harness the power of genetic genealogy to provide answers to those seeking their biological origins, deliver leads to law enforcement in cases of unidentified human remains and unknown offenders of violent crimes, and assist in exonerating the wrongly convicted. We endeavor to make a profound impact on the lives of those we serve, promoting justice, dignity, healing, and understanding in every case.</p>
+          <p style={{width:"80%", marginBottom: "10px"}}>WOLF PACK DNA's mission is to harness the power of genetic genealogy to provide answers to those seeking their biological origins, deliver leads to law enforcement in cases of unidentified human remains and unknown offenders of violent crimes, and assist in exonerating the wrongly convicted. We endeavor to make a profound impact on the lives of those we serve, promoting justice, dignity, healing, and understanding in every case.</p>
           <button onClick={() => window.location.href = "/team"} className="inq-btn">
             Meet the Team
           </button>
@@ -226,8 +235,8 @@ const Home = () => {
             {showGivebutter && activeCase.givebutter_url ? (
               <div className="givebutter-fullscreen">
                 <div className="givebutter-bar">
-                  <button onClick={() => setShowGivebutter(false)}>← Back</button>
-                  <a href={activeCase.givebutter_url} target="_blank" rel="noopener noreferrer">Open in new tab ↗</a>
+                  <button onClick={() => setShowGivebutter(false)}><i className="fas fa-arrow-left"></i></button>
+                  <a href={activeCase.givebutter_url} target="_blank" rel="noopener noreferrer"><i className="fa-solid fa-arrow-up-right-from-square"></i></a>
                 </div>
                 <iframe
                   name="givebutter"
@@ -243,7 +252,9 @@ const Home = () => {
                 <img
                   src={activeCase.image}
                   alt={activeCase.title || activeCase.name}
-                  style={{ height: "250px", objectFit: "cover", marginBottom: "12px", alignSelf: "center" }}
+                  className="modal-image-clickable"
+                  style={{ height: "250px", objectFit: "cover", marginBottom: "12px", alignSelf: "center", cursor: "pointer" }}
+                  onClick={() => setViewerImage(activeCase.image)}
                 />
                 <div style={{ color: "rgba(0,0,0,0.7)", textAlign: "left", marginBottom: "12px" }}>
                   <p style={{ margin: "0 0 4px 0" }}><b>Date:</b> {activeCase.date}</p>
@@ -254,7 +265,7 @@ const Home = () => {
                 <div style={{ color: "rgba(0,0,0,0.7)", textAlign: "left" }} dangerouslySetInnerHTML={{ __html: activeCase.description }} />
                 {activeCase.givebutter_url && (
                   <button className="givebutter-donate-btn" onClick={() => setShowGivebutter(true)}>
-                    Donate with Givebutter
+                    <i className="fas fa-dollar-sign" style={{marginRight: "6px"}}></i>Donate with Givebutter
                   </button>
                 )}
               </>
@@ -264,45 +275,47 @@ const Home = () => {
       </Modal>
 
       {/* Donate */}
-      <div id="donate" className="donate-section">
-        <h2 style={{"fontFamily": "font"}}>Make a Donation</h2>
-
-        <div className="donate-cards">
-          {/* One-Time Donation */}
-          <div className="donate-card">
-            <h3>One-Time</h3>
-            <p>
-              Make a single donation to support our ongoing investigations and
-              family reunification efforts.
-            </p>
-            <div className="donate-amounts">
-               <button className={`amount-btn ${selectedOneTime === "$25" ? "amount-selected" : ""}`} onClick={() => setSelectedOneTime("$25")}>$25</button>
-               <button className={`amount-btn ${selectedOneTime === "$50" ? "amount-selected" : ""}`} onClick={() => setSelectedOneTime("$50")}>$50</button>
-               <button className={`amount-btn ${selectedOneTime === "$100" ? "amount-selected" : ""}`} onClick={() => setSelectedOneTime("$100")}>$100</button>
-               <button className={`amount-btn amount-custom ${selectedOneTime === "Custom" ? "amount-selected" : ""}`} onClick={() => setSelectedOneTime("Custom")}>Custom</button>
-             </div>
-             {selectedOneTime === "Custom" && <input type="number" className="custom-amount-input" placeholder="Enter amount" min="1" onKeyDown={(e) => { if (!/[0-9]/.test(e.key) && e.key !== "Backspace" && e.key !== "Tab" && e.key !== "Delete" && e.key !== "ArrowLeft" && e.key !== "ArrowRight" && e.key !== "Home" && e.key !== "End") e.preventDefault(); }} />}
-             <button className="donate-submit-btn">Donate Now</button>
-          </div>
-
-          {/* Monthly Donation */}
-          <div className="donate-card">
-            <h3>Recurring</h3>
-            <p>
-              Become a monthly sustainer and provide reliable, recurring support
-              that fuels our work year-round.
-            </p>
-            <div className="donate-amounts">
-               <button className={`amount-btn ${selectedRecurring === "$10/mo" ? "amount-selected" : ""}`} onClick={() => setSelectedRecurring("$10/mo")}>$10/mo</button>
-               <button className={`amount-btn ${selectedRecurring === "$25/mo" ? "amount-selected" : ""}`} onClick={() => setSelectedRecurring("$25/mo")}>$25/mo</button>
-               <button className={`amount-btn ${selectedRecurring === "$50/mo" ? "amount-selected" : ""}`} onClick={() => setSelectedRecurring("$50/mo")}>$50/mo</button>
-               <button className={`amount-btn amount-custom ${selectedRecurring === "Custom" ? "amount-selected" : ""}`} onClick={() => setSelectedRecurring("Custom")}>Custom</button>
-             </div>
-             {selectedRecurring === "Custom" && <input type="number" className="custom-amount-input" placeholder="Enter amount" min="1" onKeyDown={(e) => { if (!/[0-9]/.test(e.key) && e.key !== "Backspace" && e.key !== "Tab" && e.key !== "Delete" && e.key !== "ArrowLeft" && e.key !== "ArrowRight" && e.key !== "Home" && e.key !== "End") e.preventDefault(); }} />}
-             <button className="donate-submit-btn">Subscribe Monthly</button>
-          </div>
+      <div id="donate" className="section-donate">
+        <div style={{marginBottom: "30px", marginTop: "30px"}} className="left">
+          <p style={{width:"80%", textAlign: "center", fontWeight: "bold"}}>Donate</p>
+          <p style={{width:"675px"}}>
+            Your support can help us solve cold cases, reunite families, and bring justice to those who need it most.
+            Please consider making a donation today to help us continue this vital work.
+          </p>
+          <button className="givebutter-donate-btn" onClick={() => setShowSiteDonate(true)}>
+            <i className="fas fa-dollar-sign" style={{marginRight: "6px"}}></i>Donate with Givebutter
+          </button>
         </div>
       </div>
+
+      {/* Givebutter Modal */}
+      <Modal isOpen={showSiteDonate} onClose={() => setShowSiteDonate(false)} wide className="no-padding" stickyHeader={
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "8px", position: "relative" }}>
+          <a href="https://givebutter.com/V03mQQ" target="_blank" rel="noopener noreferrer" style={{ position: "absolute", left: 0, fontSize: "17.5px", color: "var(--accent)" }}>
+            <i className="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+          <p style={{ fontWeight: "bold", fontSize: "17.5px", margin: 0 }}>Donate to Wolfpack DNA</p>
+        </div>
+      }>
+        {showSiteDonate && (
+          <iframe
+            name="givebutter"
+            title="givebutter-iframe"
+            src="https://givebutter.com/embed/c/V03mQQ"
+            style={{ width: "100%", height: "600px", border: "none", overflow: "hidden", flex: "1 1 auto" }}
+            allowpaymentrequest="true"
+            allow="payment"
+          />
+        )}
+      </Modal>
+
+      {/* Full-resolution image viewer */}
+      {viewerImage && (
+        <div className="image-viewer-overlay" onClick={() => setViewerImage(null)}>
+          <img src={viewerImage} alt="Full resolution" onClick={(e) => e.stopPropagation()} />
+          <button className="image-viewer-close" onClick={() => setViewerImage(null)}>×</button>
+        </div>
+      )}
 
       <Footer />
     </div>
