@@ -127,6 +127,7 @@ const Admin = () => {
 
   // Cases search/filter/sort state
   const [caseFilter, setCaseFilter] = useState("all");
+  const [showActiveOnly, setShowActiveOnly] = useState(false);
   const [caseSortOrder, setCaseSortOrder] = useState("newest");
   const [caseSearchQuery, setCaseSearchQuery] = useState("");
   const [caseSortOpen, setCaseSortOpen] = useState(false);
@@ -178,6 +179,10 @@ const Admin = () => {
       result = result.filter((c) => (c.type || c.category) === caseFilter);
     }
 
+    if (showActiveOnly) {
+      result = result.filter((c) => c.givebutter_url);
+    }
+
     if (caseSearchQuery.trim()) {
       const q = caseSearchQuery.toLowerCase();
       result = result.filter(
@@ -196,7 +201,7 @@ const Admin = () => {
     });
 
     return result;
-  }, [cases, caseFilter, caseSortOrder, caseSearchQuery]);
+  }, [cases, caseFilter, showActiveOnly, caseSortOrder, caseSearchQuery]);
 
   // Team state
   const [team, setTeam] = useState([]);
@@ -253,6 +258,7 @@ const Admin = () => {
     { key: "logo", label: "Logo", description: "Site logo displayed in the banner on the homepage" },
     { key: "banner", label: "Banner", description: "Hero background image on the homepage" },
     { key: "about", label: "About", description: "Image shown in the About Us section on the homepage" },
+    { key: "donate", label: "Donate", description: "Image shown in the Donate section on the homepage" },
     { key: "genetic-genealogy", label: "Genetic Genealogy", description: "Image shown in the Genetic Genealogy section on Services page" },
     { key: "law-enforcement", label: "Law Enforcement", description: "Image shown in the Law Enforcement section on Services page" },
   ];
@@ -674,6 +680,16 @@ const Admin = () => {
                   >
                     Genetic Genealogy
                   </button>
+                  <label className="admin-checkbox-label" style={{ whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: "10px", fontSize: "17.5px", marginLeft: "12px" }}>
+                    <span style={{ color: "rgba(0,0,0,0.7)", fontSize: "17.5px" }}>Active Campaigns</span>
+                    <input
+                      className="admin-checkbox"
+                      type="checkbox"
+                      checked={showActiveOnly}
+                      onChange={(e) => setShowActiveOnly(e.target.checked)}
+                    />
+                    <span className="admin-checkbox-custom" style={{ width: "22px", height: "22px" }}></span>
+                  </label>
                 </div>
                 <div className="admin-cases-sort" ref={caseSortDropdownRef}>
                   <label>Sort:</label>
@@ -740,6 +756,7 @@ const Admin = () => {
                         subtitle={c.date}
                         onClick={() => setPreviewItem({ type: "case", item: c })}
                         live={c.live}
+                        donate={!!c.givebutter_url}
                       />
                       <button className="admin-card-edit" onClick={() => openEditModal("case", c)} title="Edit case">
                         <i className="fas fa-pen"></i>
@@ -836,8 +853,8 @@ const Admin = () => {
                   </>
                 ) : (
                   <label className="admin-image-slot-empty">
-                    <i className="fas fa-cloud-upload-alt admin-image-slot-empty-icon"></i>
-                    <span className="admin-image-slot-empty-text">Click to upload {slot.label.toLowerCase()}</span>
+                <i className="fas fa-cloud-upload-alt admin-image-slot-empty-icon" style={{marginRight: "5px"}}></i>
+                <span className="admin-image-slot-empty-text">Click to upload {slot.label.toLowerCase()}</span>
                     <input
                       type="file"
                       accept="image/*"
@@ -872,7 +889,7 @@ const Admin = () => {
           </div>
           <div className="admin-field admin-field-horizontal" style={{ marginBottom: "12px" }}>
             <label className="admin-label">Date <span style={{ color: "rgba(0,0,0,0.7)" }}>*</span></label>
-            <div style={{ display: "flex", alignItems: "center", gap: "12px", flex: 1 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", flex: 1 }}>
               <input
                 className="admin-input"
                 type="text"
@@ -926,8 +943,8 @@ const Admin = () => {
             />
             {!caseImagePreview ? (
               <div className="admin-image-upload-area" onClick={handleCaseImageReplace}>
-                <i className="fas fa-cloud-upload-alt admin-image-upload-icon"></i>
-                <span className="admin-image-upload-text">Click to upload image</span>
+              <i className="fas fa-cloud-upload-alt admin-image-upload-icon" style={{marginRight: "5px"}}></i>
+              <span className="admin-image-upload-text">Click to upload image</span>
               </div>
             ) : (
               <div className="admin-image-preview-wrapper">
@@ -999,7 +1016,7 @@ const Admin = () => {
             />
             {!teamImagePreview ? (
               <div className="admin-image-upload-area" onClick={handleTeamImageReplace}>
-                <i className="fas fa-cloud-upload-alt admin-image-upload-icon"></i>
+                <i className="fas fa-cloud-upload-alt admin-image-upload-icon" style={{marginRight: "5px"}}></i>
                 <span className="admin-image-upload-text">Click to upload photo</span>
               </div>
             ) : (
@@ -1041,7 +1058,7 @@ const Admin = () => {
             </div>
             <div className="admin-field admin-field-horizontal" style={{ marginBottom: "12px" }}>
               <label className="admin-label">{editModal.type === "case" ? "Date" : "Role"} <span style={{ color: "rgba(0,0,0,0.7)" }}>*</span></label>
-              <div style={{ display: "flex", alignItems: "center", gap: "12px", flex: 1 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", flex: 1 }}>
                 <input
                   className="admin-input"
                   type="text"
@@ -1100,8 +1117,8 @@ const Admin = () => {
                 />
               {!editImagePreview ? (
                 <div className="admin-image-upload-area" onClick={handleEditImageReplace}>
-                  <i className="fas fa-cloud-upload-alt admin-image-upload-icon"></i>
-                  <span className="admin-image-upload-text">Click to upload image</span>
+                <i className="fas fa-cloud-upload-alt admin-image-upload-icon" style={{marginRight: "5px"}}></i>
+                <span className="admin-image-upload-text">Click to upload image</span>
                 </div>
               ) : (
                 <div className="admin-image-preview-wrapper">
@@ -1123,10 +1140,10 @@ const Admin = () => {
             </div>
             <div className="admin-edit-modal-buttons">
               <button className="admin-btn admin-btn-danger" onClick={() => requestDelete(editModal.type, editModal.item.id, editModal.type === "case" ? editModal.item.title || editModal.item.name : editModal.item.name)}>
-                <i className="fas fa-trash" style={{ marginRight: "6px" }}></i>Delete
+                    <i className="fas fa-trash" style={{ marginRight: "5px" }}></i>Delete
               </button>
               <button className="admin-btn" onClick={handleSaveEdit}>
-                <i className="fas fa-save" style={{ marginRight: "6px" }}></i>Save Changes
+                <i className="fas fa-save" style={{ marginRight: "5px" }}></i>Save Changes
               </button>
             </div>
           </div>
@@ -1147,7 +1164,7 @@ const Admin = () => {
                 Cancel
               </button>
               <button className="admin-btn admin-btn-danger" onClick={confirmDelete}>
-                <i className="fas fa-trash" style={{ marginRight: "6px" }}></i>Delete
+                <i className="fas fa-trash" style={{ marginRight: "5px" }}></i>Delete
               </button>
             </div>
           </div>
@@ -1167,7 +1184,7 @@ const Admin = () => {
                 Cancel
               </button>
               <button className="admin-btn admin-btn-danger" onClick={() => handleImageSlotDelete(imageSlotDelete.key)}>
-                <i className="fas fa-trash" style={{ marginRight: "6px" }}></i>Delete
+                <i className="fas fa-trash" style={{ marginRight: "5px" }}></i>Delete
               </button>
             </div>
           </div>
@@ -1175,14 +1192,14 @@ const Admin = () => {
       )}
 
       {/* Preview Modal */}
-      <Modal isOpen={!!previewItem} onClose={() => setPreviewItem(null)} wide={previewItem?.type === "case"} stickyHeader={
+      <Modal isOpen={!!previewItem} onClose={() => setPreviewItem(null)} wide={previewItem?.type === "case"} centeredHeader={previewItem?.type === "team"} stickyHeader={
         previewItem && previewItem.type === "case" ? (
           <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "8px", position: "relative" }}>
             <p style={{ fontWeight: "bold", fontSize: "17.5px", margin: 0 }}>{previewItem.item.title || previewItem.item.name}</p>
             {previewItem.item.live && <span style={{ position: "absolute", left: "0", background: "#d32f2f", color: "#fff", fontSize: "12px", fontWeight: "bold", padding: "0px 8px" }}>LIVE</span>}
           </div>
         ) : previewItem && previewItem.type === "team" ? (
-          <p style={{ fontWeight: "bold", fontSize: "17.5px", margin: "0 0 12px 0" }}>{previewItem.item.name}</p>
+          <p style={{ fontWeight: "bold", fontSize: "17.5px", margin: 0 }}>{previewItem.item.name}</p>
         ) : null
       }>
         {previewItem && (
@@ -1206,23 +1223,25 @@ const Admin = () => {
                   </div>
                 ) : (
                   <>
-                    <img
-                      src={previewItem.item.image}
-                      alt={previewItem.item.title || previewItem.item.name}
-                      className="modal-image-clickable"
-                      style={{ height: "250px", objectFit: "cover", marginBottom: "12px", alignSelf: "center" }}
-                      onClick={() => setViewerImage(previewItem.item.image)}
-                    />
-                    <div style={{ color: "rgba(0,0,0,0.7)", textAlign: "left", marginBottom: "12px" }}>
-                      <p style={{ margin: "0 0 4px 0" }}><b>Date:</b> {previewItem.item.date}</p>
-                      <p style={{ margin: 0 }}><b>Service:</b> {previewItem.item.type === "law-enforcement" ? "Law Enforcement" : "Genetic Genealogy"}</p>
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                      <img
+                        src={previewItem.item.image}
+                        alt={previewItem.item.title || previewItem.item.name}
+                        className="modal-image-clickable"
+                        style={{ maxWidth: "100%", height: "250px", objectFit: "cover", marginBottom: "12px", cursor: "pointer" }}
+                        onClick={() => setViewerImage(previewItem.item.image)}
+                      />
+                      {previewItem.item.givebutter_url && (
+                        <button className="givebutter-donate-btn" onClick={() => setShowGivebutter(true)} style={{ marginBottom: "12px" }}>
+                          <i className="fas fa-dollar-sign" style={{marginRight: "5px"}}></i>Donate to this case
+                        </button>
+                      )}
+                      <div style={{ color: "rgba(0,0,0,0.7)", textAlign: "left", width: "100%" }}>
+                        <p style={{ margin: "0 0 4px 0" }}><b>Date:</b> {previewItem.item.date}</p>
+                        <p style={{ margin: 0 }}><b>Service:</b> {previewItem.item.type === "law-enforcement" ? "Law Enforcement" : "Genetic Genealogy"}</p>
+                      </div>
+                      <div style={{ color: "rgba(0,0,0,0.7)", textAlign: "left" }} dangerouslySetInnerHTML={{ __html: previewItem.item.description }} />
                     </div>
-                    <div style={{ color: "rgba(0,0,0,0.7)", textAlign: "left" }} dangerouslySetInnerHTML={{ __html: previewItem.item.description }} />
-                    {previewItem.item.givebutter_url && (
-                      <button style={{color: "white"}} className="givebutter-donate-btn" onClick={() => setShowGivebutter(true)}>
-                        <i className="fas fa-dollar-sign" style={{marginRight: "6px"}}></i>Donate with Givebutter
-                      </button>
-                    )}
                   </>
                 )}
               </>

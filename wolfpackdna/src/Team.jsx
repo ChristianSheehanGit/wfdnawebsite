@@ -64,9 +64,10 @@ const Team = () => {
       <Modal
         isOpen={!!activeMember}
         onClose={() => setActiveMember(null)}
+        centeredHeader
         stickyHeader={
           activeMember && (
-            <p style={{ fontWeight: "bold", fontSize: "17.5px", margin: "0 0 12px 0" }}>
+            <p style={{ fontWeight: "bold", fontSize: "17.5px", margin: 0 }}>
               {activeMember.name}
             </p>
           )

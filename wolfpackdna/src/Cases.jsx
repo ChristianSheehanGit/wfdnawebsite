@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useRef, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import Navbar from "./components/navbar.jsx";
 import Footer from "./components/footer.jsx";
 import Card from "./components/card.jsx";
@@ -11,13 +12,21 @@ const Cases = () => {
   const [cases, setCases] = useState([]);
   const [activeCase, setActiveCase] = useState(null);
   const [showGivebutter, setShowGivebutter] = useState(false);
-  const [filter, setFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [showActiveOnly, setShowActiveOnly] = useState(false);
   const [sortOrder, setSortOrder] = useState("newest");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOpen, setSortOpen] = useState(false);
   const sortDropdownRef = useRef(null);
   const [loading, setLoading] = useState(true);
   const [viewerImage, setViewerImage] = useState(null);
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.hash === "#active") {
+      setShowActiveOnly(true);
+    }
+  }, [location.hash]);
 
   // Parse date strings into proper Date objects for sorting.
   // Handles: "2022" (Jan 1, 2022), "March 2022" (Mar 1, 2022), "March 22, 2022" (Mar 22, 2022)
@@ -104,8 +113,12 @@ const Cases = () => {
 
     let result = [...cases];
 
-    if (filter !== "all") {
-      result = result.filter((c) => (c.type || c.category) === filter);
+    if (categoryFilter !== "all") {
+      result = result.filter((c) => (c.type || c.category) === categoryFilter);
+    }
+
+    if (showActiveOnly) {
+      result = result.filter((c) => c.givebutter_url);
     }
 
     if (searchQuery.trim()) {
@@ -126,7 +139,7 @@ const Cases = () => {
     });
 
     return result;
-  }, [cases, filter, sortOrder, searchQuery]);
+  }, [cases, categoryFilter, showActiveOnly, sortOrder, searchQuery]);
 
   return (
     <div>
@@ -136,23 +149,33 @@ const Cases = () => {
       <div className="cases-controls">
         <div className="cases-filters">
           <button
-            className={filter === "all" ? "cases-filter-active" : ""}
-            onClick={() => setFilter("all")}
+            className={categoryFilter === "all" ? "cases-filter-active" : ""}
+            onClick={() => setCategoryFilter("all")}
           >
             All Cases
           </button>
           <button
-            className={filter === "law-enforcement" ? "cases-filter-active" : ""}
-            onClick={() => setFilter("law-enforcement")}
+            className={categoryFilter === "law-enforcement" ? "cases-filter-active" : ""}
+            onClick={() => setCategoryFilter("law-enforcement")}
           >
             Law Enforcement
           </button>
           <button
-            className={filter === "genetic-genealogy" ? "cases-filter-active" : ""}
-            onClick={() => setFilter("genetic-genealogy")}
+            className={categoryFilter === "genetic-genealogy" ? "cases-filter-active" : ""}
+            onClick={() => setCategoryFilter("genetic-genealogy")}
           >
             Genetic Genealogy
           </button>
+          <label className="cases-active-filter">
+            <span>Active Campaigns</span>
+            <input
+              className="cases-checkbox"
+              type="checkbox"
+              checked={showActiveOnly}
+              onChange={(e) => setShowActiveOnly(e.target.checked)}
+            />
+            <span className="cases-checkbox-custom"></span>
+          </label>
         </div>
         <div className="cases-sort" ref={sortDropdownRef}>
           <label>Sort:</label>
@@ -212,12 +235,13 @@ const Cases = () => {
         >
           {filteredAndSorted.map((c) => (
             <Card
-                image={c.image || `https://placehold.co/300x300/eee/999?text=Case+${c.id}`}
-                title={c.title || c.name}
-                subtitle={c.date}
-                onClick={() => setActiveCase(c)}
-                live={c.live}
-              />
+            image={c.image || `https://placehold.co/300x300/eee/999?text=Case+${c.id}`}
+            title={c.title || c.name}
+            subtitle={c.date}
+            onClick={() => setActiveCase(c)}
+            live={c.live}
+            donate={!!c.givebutter_url}
+          />
           ))}
         </div>
       )}
@@ -249,25 +273,27 @@ const Cases = () => {
               </div>
             ) : (
               <>
-                <img
-                  src={activeCase.image}
-                  alt={activeCase.title || activeCase.name}
-                  className="modal-image-clickable"
-                  style={{ height: "250px", objectFit: "cover", marginBottom: "12px", alignSelf: "center" }}
-                  onClick={() => setViewerImage(activeCase.image)}
-                />
-                <div style={{ color: "rgba(0,0,0,0.7)", textAlign: "left", marginBottom: "12px" }}>
-                  <p style={{ margin: "0 0 4px 0" }}><b>Date:</b> {activeCase.date}</p>
-                  {activeCase.type && (
-                    <p style={{ margin: 0 }}><b>Service:</b> {activeCase.type === "genetic-genealogy" ? "Genetic Genealogy" : "Law Enforcement"}</p>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  <img
+                    src={activeCase.image}
+                    alt={activeCase.title || activeCase.name}
+                    className="modal-image-clickable"
+                    style={{ maxWidth: "100%", height: "250px", objectFit: "cover", marginBottom: "12px", cursor: "pointer" }}
+                    onClick={() => setViewerImage(activeCase.image)}
+                  />
+                  {activeCase.givebutter_url && (
+                    <button className="givebutter-donate-btn" onClick={() => setShowGivebutter(true)} style={{ marginBottom: "12px" }}>
+                      <i className="fas fa-dollar-sign" style={{marginRight: "5px"}}></i>Donate to this case
+                    </button>
                   )}
+                  <div style={{ color: "rgba(0,0,0,0.7)", textAlign: "left", width: "100%" }}>
+                    <p style={{ margin: "0 0 4px 0" }}><b>Date:</b> {activeCase.date}</p>
+                    {activeCase.type && (
+                      <p style={{ margin: 0 }}><b>Service:</b> {activeCase.type === "genetic-genealogy" ? "Genetic Genealogy" : "Law Enforcement"}</p>
+                    )}
+                  </div>
+                  <div style={{ color: "rgba(0,0,0,0.7)", textAlign: "left" }} dangerouslySetInnerHTML={{ __html: activeCase.description }} />
                 </div>
-                <div style={{ color: "rgba(0,0,0,0.7)", textAlign: "left" }} dangerouslySetInnerHTML={{ __html: activeCase.description }} />
-                {activeCase.givebutter_url && (
-                  <button style={{color: "white"}} className="givebutter-donate-btn" onClick={() => setShowGivebutter(true)}>
-                    <i className="fas fa-dollar-sign" style={{marginRight: "6px"}}></i>Donate with Givebutter
-                  </button>
-                )}
               </>
             )}
           </>

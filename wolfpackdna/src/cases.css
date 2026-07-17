@@ -139,6 +139,50 @@
   font-size: 17.5px;
   color: rgba(0, 0, 0, 0.7);
 }
+
+.cases-active-filter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 17.5px;
+  margin-left: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.cases-active-filter span {
+  color: rgba(0, 0, 0, 0.7);
+  font-size: 17.5px;
+}
+
+.cases-checkbox {
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  background: #fff;
+  cursor: pointer;
+  position: relative;
+}
+
+.cases-checkbox:checked::after {
+  content: "";
+  position: absolute;
+  left: 7.5px;
+  top: 3px;
+  width: 7px;
+  height: 11px;
+  border: solid rgba(63, 149, 156);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.cases-checkbox-custom {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+}
+
 .cases-card-wrapper {
   position: relative;
 }
@@ -156,5 +200,24 @@
   border-radius: 4px;
   z-index: 2;
   text-transform: uppercase;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.cases-donate-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #6eaa58;
+  color: #fff;
+  font-family: font;
+  font-size: 14px;
+  font-weight: bold;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }

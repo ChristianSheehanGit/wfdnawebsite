@@ -122,7 +122,7 @@ app.listen(PORT, () => {
   // hosting platforms that spin down idle instances (e.g. Render, Railway).
   // This keeps the Firestore connection and OAuth2 token warm.
   // -----------------------------------------------------------------------
-  const KEEP_ALIVE_INTERVAL_MS = 2 * 60 * 1000; // 2 minutes
+  const KEEP_ALIVE_INTERVAL_MS = 30 * 1000; // 2 minutes
   const keepAlive = async () => {
     try {
       // Query both collections to keep them warm

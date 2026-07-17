@@ -44,6 +44,17 @@
   padding: 12px 32px 4px 32px;
 }
 
+.modal-header--centered {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(216, 216, 216, 0.5);
+  padding: 12px 32px 4px 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 /* Title text at the top of the sticky header bar: keep an 8px gap below it
    (overriding the inline 12px used on individual modal titles). Targets the
    direct children of .modal-header — both a bare <p> title and a <div> wrapper
@@ -155,7 +166,6 @@
 .givebutter-donate-btn {
   display: inline-block;
   align-self: flex-start;
-  margin-top: 16px;
   width: auto;
   padding: 9px 18px;
   border: none;
@@ -175,6 +185,32 @@
 }
 
 .givebutter-donate-btn:active {
+  transform: scale(0.98);
+}
+
+
+.givebutter-donate2-btn {
+  display: inline-block;
+  align-self: flex-start;
+  width: auto;
+  padding: 9px 18px;
+  border: none;
+  background: rgba(63, 149, 156);
+  font-family: font;
+  font-size: 17.5px;
+  font-weight: normal;
+  color: #fff !important;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+  align-self:center;
+}
+
+.givebutter-donate2-btn:hover {
+  background: rgb(53, 123, 130);
+  transform: translateY(-1px);
+}
+
+.givebutter-donate2-btn:active {
   transform: scale(0.98);
 }
 
@@ -233,11 +269,11 @@
 .modal-body .admin-btn {
   font-family: "font", monospace !important;
   font-size: 17.5px !important;
-  color: rgba(255, 255, 255, 0.8) !important;
+  color: rgba(255, 255, 255) !important;
 }
 
 .modal-body .modal-donate-submit {
-  color: rgba(255, 255, 255, 0.8) !important;
+  color: rgba(255, 255, 255) !important;
 }
 
 .modal-body img {
@@ -341,7 +377,7 @@
   font-family: font;
   font-size: 17.5px;
   font-weight: normal;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255);
   cursor: pointer;
   transition: background 0.15s ease, transform 0.15s ease;
 }
@@ -409,7 +445,7 @@
   background: none;
   border: none;
   font-size: 32px;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255);
   cursor: pointer;
   z-index: 5001;
   line-height: 1;

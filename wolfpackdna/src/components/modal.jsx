@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import "./modal.css";
 
-const Modal = ({ isOpen, onClose, children, wide = false, stickyHeader = null, dirty = false, onDiscard, onSaveAndClose, className = "" }) => {
+const Modal = ({ isOpen, onClose, children, wide = false, stickyHeader = null, dirty = false, onDiscard, onSaveAndClose, className = "", centeredHeader = false }) => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [pendingAction, setPendingAction] = useState(null);
 
@@ -52,7 +52,7 @@ const Modal = ({ isOpen, onClose, children, wide = false, stickyHeader = null, d
   return (
     <div className="modal-overlay" onClick={handleClose}>
       <div className={`modal-content ${wide ? "modal-wide" : ""}`} onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
+        <div className={centeredHeader ? "modal-header modal-header--centered" : "modal-header"}>
           <button className="modal-close" onClick={handleClose}>×</button>
           {stickyHeader}
         </div>
@@ -62,18 +62,18 @@ const Modal = ({ isOpen, onClose, children, wide = false, stickyHeader = null, d
         {showConfirm && (
           <div className="modal-confirm-overlay" onClick={handleCancel}>
             <div className="admin-delete-confirm" onClick={(e) => e.stopPropagation()}>
-              <p style={{ fontWeight: "bold", fontSize: "17.5px", marginBottom: "12px" }}>Unsaved Changes</p>
+              <p istyle={{ fontWeight: "bold", fontSize: "17.5px", marginBottom: "12px" }}>Unsaved Changes</p>
               <p style={{ fontSize: "17.5px", color: "rgba(0,0,0,0.7)", marginBottom: "20px" }}>
                 You have unsaved changes. What would you like to do?
               </p>
               <div className="admin-edit-modal-buttons">
                 {onSaveAndClose && (
                   <button className="admin-btn" onClick={handleSave}>
-                    <i className="fas fa-save" style={{ marginRight: "6px" }}></i>Save
+                    <i className="fas fa-save" style={{ marginRight: "5px" }}></i>Save
                   </button>
                 )}
                 <button className="admin-btn admin-btn-danger" onClick={handleDiscard}>
-                  <i className="fas fa-trash" style={{ marginRight: "6px" }}></i>Discard
+                  <i className="fas fa-trash" style={{ marginRight: "5px" }}></i>Discard
                 </button>
               </div>
             </div>

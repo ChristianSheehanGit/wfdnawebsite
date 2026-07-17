@@ -14,6 +14,7 @@ const defaultImages = {
   logo: "",
   banner: "",
   about: "",
+  donate: "",
   "genetic-genealogy": "",
   "law-enforcement": "",
 };

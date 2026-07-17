@@ -54,7 +54,7 @@
 
 .inquiry-step-indicator.active .inquiry-step-number {
   background: rgba(255, 255, 255, 0.3);
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 1);
 }
 
 .inquiry-step-indicator.completed .inquiry-step-number {

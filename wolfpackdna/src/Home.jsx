@@ -195,6 +195,7 @@ const Home = () => {
                 subtitle={c.date}
                 onClick={() => setActiveCase(c)}
                 live={c.live}
+                donate={!!c.givebutter_url}
               />
             ))}
           </div>
@@ -208,7 +209,7 @@ const Home = () => {
           <p style={{width:"80%", textAlign: "center", fontWeight: "bold"}}>About Us</p>
           <p style={{width:"80%", marginBottom: "10px"}}>WOLF PACK DNA's mission is to harness the power of genetic genealogy to provide answers to those seeking their biological origins, deliver leads to law enforcement in cases of unidentified human remains and unknown offenders of violent crimes, and assist in exonerating the wrongly convicted. We endeavor to make a profound impact on the lives of those we serve, promoting justice, dignity, healing, and understanding in every case.</p>
           <button onClick={() => window.location.href = "/team"} className="inq-btn">
-            Meet the Team
+            <i className="fa-solid fa-users" style={{marginRight: "5px"}}></i>Meet the Team
           </button>
         </div>
 
@@ -249,25 +250,27 @@ const Home = () => {
               </div>
             ) : (
               <>
-                <img
-                  src={activeCase.image}
-                  alt={activeCase.title || activeCase.name}
-                  className="modal-image-clickable"
-                  style={{ height: "250px", objectFit: "cover", marginBottom: "12px", alignSelf: "center", cursor: "pointer" }}
-                  onClick={() => setViewerImage(activeCase.image)}
-                />
-                <div style={{ color: "rgba(0,0,0,0.7)", textAlign: "left", marginBottom: "12px" }}>
-                  <p style={{ margin: "0 0 4px 0" }}><b>Date:</b> {activeCase.date}</p>
-                  {activeCase.type && (
-                    <p style={{ margin: 0 }}><b>Service:</b> {activeCase.type === "genetic-genealogy" ? "Genetic Genealogy" : "Law Enforcement"}</p>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  <img
+                    src={activeCase.image}
+                    alt={activeCase.title || activeCase.name}
+                    className="modal-image-clickable"
+                    style={{ maxWidth: "100%", height: "250px", objectFit: "cover", marginBottom: "12px", cursor: "pointer" }}
+                    onClick={() => setViewerImage(activeCase.image)}
+                  />
+                  {activeCase.givebutter_url && (
+                    <button className="givebutter-donate-btn" onClick={() => setShowGivebutter(true)} style={{ marginBottom: "12px" }}>
+                      <i className="fas fa-dollar-sign" style={{marginRight: "5px"}}></i>Donate to this case
+                    </button>
                   )}
+                  <div style={{ color: "rgba(0,0,0,0.7)", textAlign: "left", width: "100%" }}>
+                    <p style={{ margin: "0 0 4px 0" }}><b>Date:</b> {activeCase.date}</p>
+                    {activeCase.type && (
+                      <p style={{ margin: 0 }}><b>Service:</b> {activeCase.type === "genetic-genealogy" ? "Genetic Genealogy" : "Law Enforcement"}</p>
+                    )}
+                  </div>
+                  <div style={{ color: "rgba(0,0,0,0.7)", textAlign: "left" }} dangerouslySetInnerHTML={{ __html: activeCase.description }} />
                 </div>
-                <div style={{ color: "rgba(0,0,0,0.7)", textAlign: "left" }} dangerouslySetInnerHTML={{ __html: activeCase.description }} />
-                {activeCase.givebutter_url && (
-                  <button className="givebutter-donate-btn" onClick={() => setShowGivebutter(true)}>
-                    <i className="fas fa-dollar-sign" style={{marginRight: "6px"}}></i>Donate with Givebutter
-                  </button>
-                )}
               </>
             )}
           </>
@@ -276,16 +279,31 @@ const Home = () => {
 
       {/* Donate */}
       <div id="donate" className="section-donate">
-        <div style={{marginBottom: "30px", marginTop: "30px"}} className="left">
-          <p style={{width:"80%", textAlign: "center", fontWeight: "bold"}}>Donate</p>
-          <p style={{width:"675px"}}>
-            Your support can help us solve cold cases, reunite families, and bring justice to those who need it most.
-            Please consider making a donation today to help us continue this vital work.
-          </p>
-          <button className="givebutter-donate-btn" onClick={() => setShowSiteDonate(true)}>
-            <i className="fas fa-dollar-sign" style={{marginRight: "6px"}}></i>Donate with Givebutter
-          </button>
+                {/* RIGHT — donate image */}
+        <div className="right">
+          {!failed.donate ? (
+            <img src={getImage("donate")} alt="Donate" className="donate-img" onError={() => markFailed("donate")} />
+          ) : (
+            <div className="donate-img-placeholder" />
+          )}
         </div>
+        {/* LEFT — text */}
+        <div className="left">
+          <p style={{width:"80%", textAlign: "center", fontWeight: "bold"}}>Donate</p>
+          <p style={{width:"80%", marginBottom: "10px"}}>
+            Wolf Pack DNA is a 501(c)3 nonprofit. Every donation is tax deductible and goes directly toward funding lab analysis, DNA research, and investigative leads on active cases. You can choose to make a general donation to the organization, or direct your support toward a specific case with an active funding campaign.
+          </p>
+          <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", justifyContent: "center" }}>
+            <button className="givebutter-donate-btn" onClick={() => setShowSiteDonate(true)}>
+              <i className="fas fa-dollar-sign" style={{marginRight: "5px"}}></i>Donate to WolfPackDNA
+            </button>
+            <a href="/cases#active" className="givebutter-donate2-btn" style={{ textDecoration: "none" }}>
+              <i className="fas fa-search" style={{marginRight: "5px"}}></i>Browse Active Campaigns
+            </a>
+          </div>
+        </div>
+
+
       </div>
 
       {/* Givebutter Modal */}

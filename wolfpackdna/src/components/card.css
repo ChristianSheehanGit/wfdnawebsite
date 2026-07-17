@@ -39,6 +39,23 @@
   gap: 3px;
 }
 
+.card-donate-indicator {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #6eaa58;
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .card-image {
   width: 100%;
   height: 100%;
