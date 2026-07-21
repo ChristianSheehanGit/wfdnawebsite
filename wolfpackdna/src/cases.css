@@ -2,7 +2,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 32px;
+  gap: 16px;
   padding: 32px 20px 0;
   flex-wrap: wrap;
 }
@@ -10,6 +10,17 @@
 .cases-filters {
   display: flex;
   gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .cases-controls {
+    gap: 24px;
+  }
+  .cases-filters {
+    gap: 16px;
+  }
 }
 
 .cases-filters button {
@@ -113,6 +124,12 @@
   flex-wrap: wrap;
 }
 
+@media (max-width: 500px) {
+  .cases-search-wrapper {
+    gap: 20px;
+  }
+}
+
 .cases-search-input {
   font-family: font;
   font-size: 17.5px;
@@ -121,8 +138,10 @@
   border: none;
   padding: 8px 16px;
   width: 280px;
+  max-width: 100%;
   outline: none;
   transition: background 0.1s ease;
+  box-sizing: border-box;
 }
 
 .cases-search-input:focus {
@@ -177,11 +196,6 @@
   transform: rotate(45deg);
 }
 
-.cases-checkbox-custom {
-  display: inline-block;
-  width: 22px;
-  height: 22px;
-}
 
 .cases-card-wrapper {
   position: relative;

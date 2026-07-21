@@ -655,7 +655,7 @@ const Admin = () => {
                 <p className="admin-tab-placeholder" style={{ margin: 0 }}>
                   {cases.length} case{cases.length !== 1 ? "s" : ""}
                 </p>
-                <button className="admin-add-btn" onClick={() => openAddModal("case")}>
+                <button className="btn btn-blue" onClick={() => openAddModal("case")}>
                   + Add Case
                 </button>
               </div>
@@ -680,15 +680,14 @@ const Admin = () => {
                   >
                     Genetic Genealogy
                   </button>
-                  <label className="admin-checkbox-label" style={{ whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: "10px", fontSize: "17.5px", marginLeft: "12px" }}>
-                    <span style={{ color: "rgba(0,0,0,0.7)", fontSize: "17.5px" }}>Active Campaigns</span>
+                  <label className="admin-active-filter">
+                    <span>Active Campaigns</span>
                     <input
-                      className="admin-checkbox"
+                      className="cases-checkbox"
                       type="checkbox"
                       checked={showActiveOnly}
                       onChange={(e) => setShowActiveOnly(e.target.checked)}
                     />
-                    <span className="admin-checkbox-custom" style={{ width: "22px", height: "22px" }}></span>
                   </label>
                 </div>
                 <div className="admin-cases-sort" ref={caseSortDropdownRef}>
@@ -775,7 +774,7 @@ const Admin = () => {
                 <p className="admin-tab-placeholder" style={{ margin: 0 }}>
                   {team.length} member{team.length !== 1 ? "s" : ""}
                 </p>
-                <button className="admin-add-btn" onClick={() => openAddModal("team")}>
+                <button className="btn btn-blue" onClick={() => openAddModal("team")}>
                   + Add Team Member
                 </button>
               </div>
@@ -832,7 +831,7 @@ const Admin = () => {
                     <div className="admin-image-slot-overlay">
                       <span className="admin-image-slot-overlay-label">{slot.label}</span>
                       <div className="admin-image-slot-overlay-buttons">
-                        <label className="admin-image-slot-overlay-btn admin-image-slot-overlay-replace" title="Replace image">
+                        <label className="btn-icon btn-icon-blue" title="Replace image" style={{ cursor: "pointer" }}>
                           <i className="fas fa-upload"></i>
                           <input
                             type="file"
@@ -842,7 +841,7 @@ const Admin = () => {
                           />
                         </label>
                         <button
-                          className="admin-image-slot-overlay-btn admin-image-slot-overlay-delete"
+                          className="btn-icon btn-icon-danger"
                           onClick={() => setImageSlotDelete(slot)}
                           title="Delete image"
                         >
@@ -874,7 +873,7 @@ const Admin = () => {
       </div>
 
       {/* Add Case Modal */}
-      <Modal isOpen={showAddModal === "case"} onClose={closeAddModal} wide stickyHeader={
+      <Modal isOpen={showAddModal === "case"} onClose={closeAddModal} wide centeredHeader={true} stickyHeader={
         <p style={{ fontWeight: "bold", fontSize: "17.5px", margin: "0 0 12px 0" }}>Add New Case</p>
       } dirty={addDirty} onDiscard={() => setAddDirty(false)} onSaveAndClose={addDirty ? handleAddCase : undefined}>
         <div className="admin-edit-modal">
@@ -950,8 +949,8 @@ const Admin = () => {
               <div className="admin-image-preview-wrapper">
                 <img src={caseImagePreview} alt="Preview" className="admin-image-preview" />
                 <div className="admin-image-overlay">
-                  <button className="admin-image-overlay-btn admin-image-overlay-replace" onClick={handleCaseImageReplace} title="Replace image"><i className="fas fa-upload"></i></button>
-                  <button className="admin-image-overlay-btn admin-image-overlay-delete" onClick={handleCaseImageDelete} title="Delete image"><i className="fas fa-trash"></i></button>
+                  <button className="btn-icon btn-icon-blue" onClick={handleCaseImageReplace} title="Replace image"><i className="fas fa-upload"></i></button>
+                  <button className="btn-icon btn-icon-danger" onClick={handleCaseImageDelete} title="Delete image"><i className="fas fa-trash"></i></button>
                 </div>
               </div>
             )}
@@ -966,7 +965,7 @@ const Admin = () => {
           </div>
           
           <div className="admin-edit-modal-buttons">
-            <button className="admin-btn" onClick={handleAddCase}>
+            <button className="btn btn-blue" onClick={handleAddCase}>
               Add Case
             </button>
           </div>
@@ -974,7 +973,7 @@ const Admin = () => {
       </Modal>
 
       {/* Add Team Member Modal */}
-      <Modal isOpen={showAddModal === "team"} onClose={closeAddModal} stickyHeader={
+      <Modal isOpen={showAddModal === "team"} onClose={closeAddModal} centeredHeader={true} stickyHeader={
         <p style={{ fontWeight: "bold", fontSize: "17.5px", margin: "0 0 12px 0" }}>Add New Team Member</p>
       }>
         <div className="admin-edit-modal">
@@ -1023,14 +1022,14 @@ const Admin = () => {
               <div className="admin-image-preview-wrapper">
                 <img src={teamImagePreview} alt="Preview" className="admin-image-preview" />
                 <div className="admin-image-overlay">
-                  <button className="admin-image-overlay-btn admin-image-overlay-replace" onClick={handleTeamImageReplace} title="Replace image"><i className="fas fa-upload"></i></button>
-                  <button className="admin-image-overlay-btn admin-image-overlay-delete" onClick={handleTeamImageDelete} title="Delete image"><i className="fas fa-trash"></i></button>
+                  <button className="btn-icon btn-icon-blue" onClick={handleTeamImageReplace} title="Replace image"><i className="fas fa-upload"></i></button>
+                  <button className="btn-icon btn-icon-danger" onClick={handleTeamImageDelete} title="Delete image"><i className="fas fa-trash"></i></button>
                 </div>
               </div>
             )}
           </div>
           <div className="admin-edit-modal-buttons">
-            <button className="admin-btn" onClick={handleAddTeam}>
+            <button className="btn btn-blue" onClick={handleAddTeam}>
               Add Team Member
             </button>
           </div>
@@ -1038,7 +1037,7 @@ const Admin = () => {
       </Modal>
 
       {/* Edit Modal */}
-      <Modal isOpen={!!editModal} onClose={closeEditModal} wide={editModal?.type === "case"} stickyHeader={
+      <Modal isOpen={!!editModal} onClose={closeEditModal} wide={editModal?.type === "case"} centeredHeader={true} stickyHeader={
         editModal && (
           <p style={{ fontWeight: "bold", fontSize: "17.5px", margin: "0 0 12px 0" }}>
             Edit {editModal.type === "case" ? "Case" : "Team Member"}
@@ -1124,8 +1123,8 @@ const Admin = () => {
                 <div className="admin-image-preview-wrapper">
                   <img src={editImagePreview} alt="Preview" className="admin-image-preview" />
                 <div className="admin-image-overlay">
-                  <button className="admin-image-overlay-btn admin-image-overlay-replace" onClick={handleEditImageReplace} title="Replace image"><i className="fas fa-upload"></i></button>
-                  <button className="admin-image-overlay-btn admin-image-overlay-delete" onClick={handleEditImageDelete} title="Delete image"><i className="fas fa-trash"></i></button>
+                  <button className="btn-icon btn-icon-blue" onClick={handleEditImageReplace} title="Replace image"><i className="fas fa-upload"></i></button>
+                  <button className="btn-icon btn-icon-danger" onClick={handleEditImageDelete} title="Delete image"><i className="fas fa-trash"></i></button>
                 </div>
                 </div>
               )}
@@ -1139,10 +1138,10 @@ const Admin = () => {
               />
             </div>
             <div className="admin-edit-modal-buttons">
-              <button className="admin-btn admin-btn-danger" onClick={() => requestDelete(editModal.type, editModal.item.id, editModal.type === "case" ? editModal.item.title || editModal.item.name : editModal.item.name)}>
+              <button className="btn btn-danger" onClick={() => requestDelete(editModal.type, editModal.item.id, editModal.type === "case" ? editModal.item.title || editModal.item.name : editModal.item.name)}>
                     <i className="fas fa-trash" style={{ marginRight: "5px" }}></i>Delete
               </button>
-              <button className="admin-btn" onClick={handleSaveEdit}>
+              <button className="btn btn-blue" onClick={handleSaveEdit}>
                 <i className="fas fa-save" style={{ marginRight: "5px" }}></i>Save Changes
               </button>
             </div>
@@ -1160,10 +1159,10 @@ const Admin = () => {
               Are you sure you want to delete <strong>"{deleteConfirm.name}"</strong>? This action cannot be undone.
             </p>
             <div className="admin-edit-modal-buttons">
-              <button className="admin-btn" onClick={cancelDelete}>
+              <button className="btn btn-blue" onClick={cancelDelete}>
                 Cancel
               </button>
-              <button className="admin-btn admin-btn-danger" onClick={confirmDelete}>
+              <button className="btn btn-danger" onClick={confirmDelete}>
                 <i className="fas fa-trash" style={{ marginRight: "5px" }}></i>Delete
               </button>
             </div>
@@ -1180,10 +1179,10 @@ const Admin = () => {
               Are you sure you want to delete the <strong>"{imageSlotDelete.label}"</strong> image? It will revert to the default.
             </p>
             <div className="admin-edit-modal-buttons">
-              <button className="admin-btn" onClick={() => setImageSlotDelete(null)}>
+              <button className="btn btn-blue" onClick={() => setImageSlotDelete(null)}>
                 Cancel
               </button>
-              <button className="admin-btn admin-btn-danger" onClick={() => handleImageSlotDelete(imageSlotDelete.key)}>
+              <button className="btn btn-danger" onClick={() => handleImageSlotDelete(imageSlotDelete.key)}>
                 <i className="fas fa-trash" style={{ marginRight: "5px" }}></i>Delete
               </button>
             </div>
@@ -1232,11 +1231,11 @@ const Admin = () => {
                         onClick={() => setViewerImage(previewItem.item.image)}
                       />
                       {previewItem.item.givebutter_url && (
-                        <button className="givebutter-donate-btn" onClick={() => setShowGivebutter(true)} style={{ marginBottom: "12px" }}>
+                        <button className="btn btn-green" onClick={() => setShowGivebutter(true)} style={{ marginBottom: "12px" }}>
                           <i className="fas fa-dollar-sign" style={{marginRight: "5px"}}></i>Donate to this case
                         </button>
                       )}
-                      <div style={{ color: "rgba(0,0,0,0.7)", textAlign: "left", width: "100%" }}>
+                      <div style={{ color: "rgba(0,0,0,0.7)", textAlign: "left", width: "100%", marginBottom: "12px" }}>
                         <p style={{ margin: "0 0 4px 0" }}><b>Date:</b> {previewItem.item.date}</p>
                         <p style={{ margin: 0 }}><b>Service:</b> {previewItem.item.type === "law-enforcement" ? "Law Enforcement" : "Genetic Genealogy"}</p>
                       </div>

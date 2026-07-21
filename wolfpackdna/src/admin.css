@@ -300,26 +300,7 @@
   justify-content: flex-end;
 }
 
-.admin-btn {
-  background: rgba(63, 149, 156);
-  font-family: "font", monospace;
-  font-weight: normal;
-  color: rgba(255, 255, 255, 0.8);
-  border: none;
-  padding: 9px 18px;
-  font-size: 17.5px;
-  cursor: pointer;
-  transition: background 0.15s ease, transform 0.15s ease;
-}
-
-.admin-btn:hover {
-  background: rgb(53, 123, 130);
-  transform: translateY(-1px);
-}
-
-.admin-btn:active {
-  transform: scale(0.98);
-}
+/* Admin buttons now use unified .btn .btn-blue / .btn .btn-danger from App.css */
 
 .admin-tab-section {
   width: 100%;
@@ -336,26 +317,7 @@
   max-width: 700px;
 }
 
-.admin-add-btn {
-  background: rgba(63, 149, 156);
-  font-family: "font", monospace;
-  font-weight: normal;
-  color: rgba(255, 255, 255, 0.8);
-  border: none;
-  padding: 9px 18px;
-  font-size: 17.5px;
-  cursor: pointer;
-  transition: background 0.15s ease, transform 0.15s ease;
-}
-
-.admin-add-btn:hover {
-  background: rgb(53, 123, 130);
-  transform: translateY(-1px);
-}
-
-.admin-add-btn:active {
-  transform: scale(0.98);
-}
+/* Add buttons now use unified .btn .btn-blue from App.css */
 
 .admin-card-wrapper {
   position: relative;
@@ -408,14 +370,6 @@
   gap: 12px;
   margin-top: 8px;
   justify-content: flex-end;
-}
-
-.admin-btn-danger {
-  background: rgba(192, 57, 43, 0.85);
-}
-
-.admin-btn-danger:hover {
-  background: rgb(192, 57, 43) !important;
 }
 
 .admin-delete-confirm {
@@ -613,37 +567,7 @@
   margin-bottom: 4px;
 }
 
-.admin-image-slot-overlay-btn {
-  font-family: "font", monospace;
-  font-size: 17.5px;
-  width: 32px;
-  height: 32px;
-  border: none;
-  cursor: pointer;
-  transition: background 0.15s ease;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.admin-image-slot-overlay-replace {
-  background: rgba(63, 149, 156, 0.9);
-  color: #fff;
-}
-
-.admin-image-slot-overlay-replace:hover {
-  background: rgb(53, 123, 130);
-}
-
-.admin-image-slot-overlay-delete {
-  background: rgba(192, 57, 43, 0.9);
-  color: #fff;
-}
-
-.admin-image-slot-overlay-delete:hover {
-  background: rgb(192, 57, 43);
-}
+/* Image slot overlay buttons now use unified .btn-icon .btn-icon-blue / .btn-icon-danger from App.css */
 
 /* --- Admin Cases Search/Filter/Sort --- */
 
@@ -651,16 +575,16 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 32px;
+  gap: 16px;
   padding: 32px 20px 0;
   flex-wrap: wrap;
-  width: 100%;
-  max-width: 700px;
 }
 
 .admin-cases-filters {
   display: flex;
   gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .admin-cases-filters button {
@@ -686,6 +610,21 @@
   background: rgba(196, 196, 196, 0.5) !important;
   font-weight: normal;
   box-shadow: 0 0 0 2px rgba(63, 149, 156);
+}
+
+.admin-active-filter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 17.5px;
+  margin-left: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.admin-active-filter span {
+  color: rgba(0, 0, 0, 0.7);
+  font-size: 17.5px;
 }
 
 .admin-cases-sort {
@@ -762,8 +701,6 @@
   gap: 16px;
   padding: 20px 20px 0;
   flex-wrap: wrap;
-  width: 100%;
-  max-width: 700px;
 }
 
 .admin-cases-search-input {
@@ -885,37 +822,7 @@
   min-width: 0;
 }
 
-.admin-image-overlay-btn {
-  font-family: "font", monospace;
-  font-size: 17.5px;
-  width: 32px;
-  height: 32px;
-  border: none;
-  cursor: pointer;
-  transition: background 0.15s ease;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.admin-image-overlay-replace {
-  background: rgba(63, 149, 156, 0.9);
-  color: #fff;
-}
-
-.admin-image-overlay-replace:hover {
-  background: rgb(53, 123, 130);
-}
-
-.admin-image-overlay-delete {
-  background: rgba(192, 57, 43, 0.9);
-  color: #fff;
-}
-
-.admin-image-overlay-delete:hover {
-  background: rgb(192, 57, 43);
-}
+/* Image overlay buttons now use unified .btn-icon .btn-icon-blue / .btn-icon-danger from App.css */
 
 @media (max-width: 768px) {
   .admin-login-box {
@@ -937,6 +844,16 @@
 
   .admin-form {
     padding: 20px;
+  }
+
+  .admin-cases-filters {
+    gap: 16px;
+  }
+}
+
+@media (max-width: 500px) {
+  .admin-cases-search-wrapper {
+    gap: 20px;
   }
 }
 /* Checkbox styling for admin forms */

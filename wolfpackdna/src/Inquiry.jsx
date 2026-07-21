@@ -121,7 +121,7 @@ const Inquiry = () => {
           <div className="inquiry-submitted">
             <p style={{ fontWeight: "bold" }}>Inquiry Submitted</p>
             <p>Thank you for your submission. Someone from our team will be in contact with you shortly.</p>
-            <button className="inq-btn" onClick={() => { setCurrentStep(0); setFormData({}); setSubmitted(false); setOtherText(""); }}>
+            <button className="btn btn-blue" onClick={() => { setCurrentStep(0); setFormData({}); setSubmitted(false); setOtherText(""); }}>
               Submit Another Inquiry
             </button>
           </div>
@@ -190,9 +190,9 @@ const Inquiry = () => {
 
           <div className="inquiry-buttons">
             {currentStep > 0 && (
-              <button className="inq-btn" onClick={handleBack}>Back</button>
+              <button className="btn btn-blue" onClick={handleBack}>Back</button>
             )}
-            <button className="inq-btn" onClick={handleNext}>
+            <button className="btn btn-blue" onClick={handleNext}>
               {currentStep < steps.length - 1 ? "Next" : "Submit"}
             </button>
           </div>

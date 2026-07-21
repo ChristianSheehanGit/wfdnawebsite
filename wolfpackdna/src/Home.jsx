@@ -208,7 +208,7 @@ const Home = () => {
         <div className="left">
           <p style={{width:"80%", textAlign: "center", fontWeight: "bold"}}>About Us</p>
           <p style={{width:"80%", marginBottom: "10px"}}>WOLF PACK DNA's mission is to harness the power of genetic genealogy to provide answers to those seeking their biological origins, deliver leads to law enforcement in cases of unidentified human remains and unknown offenders of violent crimes, and assist in exonerating the wrongly convicted. We endeavor to make a profound impact on the lives of those we serve, promoting justice, dignity, healing, and understanding in every case.</p>
-          <button onClick={() => window.location.href = "/team"} className="inq-btn">
+          <button onClick={() => window.location.href = "/team"} className="btn btn-blue">
             <i className="fa-solid fa-users" style={{marginRight: "5px"}}></i>Meet the Team
           </button>
         </div>
@@ -259,11 +259,11 @@ const Home = () => {
                     onClick={() => setViewerImage(activeCase.image)}
                   />
                   {activeCase.givebutter_url && (
-                    <button className="givebutter-donate-btn" onClick={() => setShowGivebutter(true)} style={{ marginBottom: "12px" }}>
+                    <button className="btn btn-green" onClick={() => setShowGivebutter(true)} style={{ marginBottom: "12px" }}>
                       <i className="fas fa-dollar-sign" style={{marginRight: "5px"}}></i>Donate to this case
                     </button>
                   )}
-                  <div style={{ color: "rgba(0,0,0,0.7)", textAlign: "left", width: "100%" }}>
+                  <div style={{ color: "rgba(0,0,0,0.7)", textAlign: "left", width: "100%", marginBottom: "12px" }}>
                     <p style={{ margin: "0 0 4px 0" }}><b>Date:</b> {activeCase.date}</p>
                     {activeCase.type && (
                       <p style={{ margin: 0 }}><b>Service:</b> {activeCase.type === "genetic-genealogy" ? "Genetic Genealogy" : "Law Enforcement"}</p>
@@ -294,10 +294,10 @@ const Home = () => {
             Wolf Pack DNA is a 501(c)3 nonprofit. Every donation is tax deductible and goes directly toward funding lab analysis, DNA research, and investigative leads on active cases. You can choose to make a general donation to the organization, or direct your support toward a specific case with an active funding campaign.
           </p>
           <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", justifyContent: "center" }}>
-            <button className="givebutter-donate-btn" onClick={() => setShowSiteDonate(true)}>
+            <button className="btn btn-green" onClick={() => setShowSiteDonate(true)}>
               <i className="fas fa-dollar-sign" style={{marginRight: "5px"}}></i>Donate to WolfPackDNA
             </button>
-            <a href="/cases#active" className="givebutter-donate2-btn" style={{ textDecoration: "none" }}>
+            <a href="/cases#active" className="btn btn-blue" style={{ textDecoration: "none" }}>
               <i className="fas fa-search" style={{marginRight: "5px"}}></i>Browse Active Campaigns
             </a>
           </div>

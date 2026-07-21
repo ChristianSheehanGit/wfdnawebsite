@@ -160,59 +160,7 @@
   border: none;
 }
 
-/* "Donate with Givebutter" button shown in the case details view. Sized to
-   its text only (not full width) with white text. align-self keeps it from
-   stretching when the parent is a flex column (e.g. .admin-edit-modal). */
-.givebutter-donate-btn {
-  display: inline-block;
-  align-self: flex-start;
-  width: auto;
-  padding: 9px 18px;
-  border: none;
-  background: #6eaa58;
-  font-family: font;
-  font-size: 17.5px;
-  font-weight: normal;
-  color: #fff !important;
-  cursor: pointer;
-  transition: background 0.15s ease, transform 0.15s ease;
-  align-self:center;
-}
-
-.givebutter-donate-btn:hover {
-  background: #5a8f46;
-  transform: translateY(-1px);
-}
-
-.givebutter-donate-btn:active {
-  transform: scale(0.98);
-}
-
-
-.givebutter-donate2-btn {
-  display: inline-block;
-  align-self: flex-start;
-  width: auto;
-  padding: 9px 18px;
-  border: none;
-  background: rgba(63, 149, 156);
-  font-family: font;
-  font-size: 17.5px;
-  font-weight: normal;
-  color: #fff !important;
-  cursor: pointer;
-  transition: background 0.15s ease, transform 0.15s ease;
-  align-self:center;
-}
-
-.givebutter-donate2-btn:hover {
-  background: rgb(53, 123, 130);
-  transform: translateY(-1px);
-}
-
-.givebutter-donate2-btn:active {
-  transform: scale(0.98);
-}
+/* Donate buttons now use the unified .btn .btn-green classes from App.css */
 
 /* Hyperlinks inside modals use the site's blue accent color. */
 .modal-body a {
@@ -266,7 +214,7 @@
    modals, since the global .modal-body * color rule above would otherwise
    override their white text on colored backgrounds. Links keep the accent
    color; action buttons keep their light foreground. */
-.modal-body .admin-btn {
+.modal-body .btn {
   font-family: "font", monospace !important;
   font-size: 17.5px !important;
   color: rgba(255, 255, 255) !important;

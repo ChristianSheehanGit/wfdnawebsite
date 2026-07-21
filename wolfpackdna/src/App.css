@@ -7,6 +7,92 @@ p {
   color: rgba(0, 0, 0, 0.7);
 }
 
+/* ───────────── Unified Button System ───────────── */
+.btn {
+  font-family: font;
+  font-size: 17.5px;
+  font-weight: normal;
+  padding: 9px 18px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  transition: background 0.15s ease, transform 0.15s ease;
+  line-height: normal;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn-blue {
+  background: rgba(63, 149, 156);
+  color: rgba(255, 255, 255, 1);
+}
+
+.btn-blue:hover {
+  background: rgb(53, 123, 130);
+  transform: translateY(-1px);
+}
+
+.btn-green {
+  background: #6eaa58;
+  color: #fff;
+}
+
+.btn-green:hover {
+  background: #5a8f46;
+  transform: translateY(-1px);
+}
+
+/* Danger variant for delete actions */
+.btn-danger {
+  background: rgba(192, 57, 43, 0.85);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.btn-danger:hover {
+  background: rgb(192, 57, 43);
+  transform: translateY(-1px);
+}
+
+/* Small icon button variant (e.g. edit, overlay buttons) */
+.btn-icon {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  font-size: 17.5px;
+  transition: background 0.15s ease;
+  flex-shrink: 0;
+}
+
+.btn-icon-blue {
+  background: rgba(63, 149, 156, 0.85);
+  color: #fff;
+}
+
+.btn-icon-blue:hover {
+  background: rgb(53, 123, 130);
+}
+
+.btn-icon-danger {
+  background: rgba(192, 57, 43, 0.9);
+  color: #fff;
+}
+
+.btn-icon-danger:hover {
+  background: rgb(192, 57, 43);
+}
+
+/* ───────────── End Unified Button System ───────────── */
+
 .counter {
   font-size: 17.5px;
   padding: 5px 10px;
@@ -321,31 +407,6 @@ p {
 }
 
 .cta-btn:active {
-  transform: scale(0.98);
-}
-
-.inq-btn {
-  background: rgba(63, 149, 156);
-  font-family: font;
-  font-weight: normal;
-  color: rgba(255, 255, 255, 1);
-  border: none;
-  padding: 9px 18px;
-  font-size: 17.5px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  white-space: nowrap;
-  transition: background 0.15s ease, transform 0.15s ease;
-}
-
-.inq-btn:hover {
-  background: rgb(53, 123, 130);
-  transform: translateY(-1px);
-}
-
-.inq-btn:active {
   transform: scale(0.98);
 }
 

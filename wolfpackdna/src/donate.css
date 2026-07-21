@@ -109,25 +109,4 @@
   box-shadow: 0 0 0 2px rgba(63, 149, 156), 0 0 0 4px rgba(77, 134, 141, 0.15);
 }
 
-/* ───────────── Submit Buttons ───────────── */
-.donate-submit-btn {
-  width: 100%;
-  padding: 9px 18px;
-  border: none;
-  background: rgba(63, 149, 156);
-  font-family: font;
-  font-size: 17.5px;
-  color: rgba(255, 255, 255);
-  font-weight: normal;
-  cursor: pointer;
-  transition: background 0.15s ease, transform 0.15s ease;
-}
-
-.donate-submit-btn:hover {
-  background: rgb(53, 123, 130);
-  transform: translateY(-1px);
-}
-
-.donate-submit-btn:active {
-  transform: scale(0.98);
-}
+/* Submit buttons now use the unified .btn .btn-green classes from App.css */

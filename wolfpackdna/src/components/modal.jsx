@@ -68,11 +68,11 @@ const Modal = ({ isOpen, onClose, children, wide = false, stickyHeader = null, d
               </p>
               <div className="admin-edit-modal-buttons">
                 {onSaveAndClose && (
-                  <button className="admin-btn" onClick={handleSave}>
+                  <button className="btn btn-blue" onClick={handleSave}>
                     <i className="fas fa-save" style={{ marginRight: "5px" }}></i>Save
                   </button>
                 )}
-                <button className="admin-btn admin-btn-danger" onClick={handleDiscard}>
+                <button className="btn btn-danger" onClick={handleDiscard}>
                   <i className="fas fa-trash" style={{ marginRight: "5px" }}></i>Discard
                 </button>
               </div>

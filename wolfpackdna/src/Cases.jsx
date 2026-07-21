@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useEffect } from "react";
+import React, { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import Navbar from "./components/navbar.jsx";
 import Footer from "./components/footer.jsx";
@@ -21,12 +21,78 @@ const Cases = () => {
   const [loading, setLoading] = useState(true);
   const [viewerImage, setViewerImage] = useState(null);
   const location = useLocation();
+  const casesRef = useRef(cases);
 
+  // Keep ref in sync
+  useEffect(() => {
+    casesRef.current = cases;
+  }, [cases]);
+
+  // Open a case modal by case id — looks up the case in the current cases list.
+  const openCaseById = useCallback((caseId) => {
+    const found = casesRef.current.find((c) => c.id === caseId);
+    if (found) {
+      setActiveCase(found);
+    }
+  }, []);
+
+  // Handle initial hash and hash changes for #case-{id}
+  useEffect(() => {
+    const match = location.hash.match(/^#case-(.+)$/);
+    if (match) {
+      const caseId = match[1];
+      // If cases are already loaded, open immediately; otherwise openCaseById
+      // will be called once they're loaded (see the effect below).
+      openCaseById(caseId);
+    }
+  }, [location.hash, openCaseById]);
+
+  // After cases finish loading, check if a #case-{id} hash is present and open it.
+  useEffect(() => {
+    if (!loading && cases.length > 0) {
+      const match = location.hash.match(/^#case-(.+)$/);
+      if (match) {
+        openCaseById(match[1]);
+      }
+    }
+  }, [loading, cases, location.hash, openCaseById]);
+
+  // Handle the existing #active hash
   useEffect(() => {
     if (location.hash === "#active") {
       setShowActiveOnly(true);
     }
   }, [location.hash]);
+
+  // Listen for hashchange to handle browser back/forward navigation
+  useEffect(() => {
+    const onHashChange = () => {
+      const hash = window.location.hash;
+      const caseMatch = hash.match(/^#case-(.+)$/);
+      if (caseMatch) {
+        openCaseById(caseMatch[1]);
+      } else if (hash !== "#active") {
+        setActiveCase(null);
+      }
+    };
+    window.addEventListener("hashchange", onHashChange);
+    return () => window.removeEventListener("hashchange", onHashChange);
+  }, [openCaseById]);
+
+  // Helper to open a case modal and set the URL hash
+  const handleCardClick = (c) => {
+    setActiveCase(c);
+    window.location.hash = `case-${c.id}`;
+  };
+
+  // Helper to close the modal and clear the hash
+  const handleClose = () => {
+    setActiveCase(null);
+    const hash = window.location.hash;
+    if (hash.startsWith("#case-")) {
+      window.location.hash = "";
+    }
+  };
 
   // Parse date strings into proper Date objects for sorting.
   // Handles: "2022" (Jan 1, 2022), "March 2022" (Mar 1, 2022), "March 22, 2022" (Mar 22, 2022)
@@ -174,7 +240,6 @@ const Cases = () => {
               checked={showActiveOnly}
               onChange={(e) => setShowActiveOnly(e.target.checked)}
             />
-            <span className="cases-checkbox-custom"></span>
           </label>
         </div>
         <div className="cases-sort" ref={sortDropdownRef}>
@@ -238,7 +303,7 @@ const Cases = () => {
             image={c.image || `https://placehold.co/300x300/eee/999?text=Case+${c.id}`}
             title={c.title || c.name}
             subtitle={c.date}
-            onClick={() => setActiveCase(c)}
+            onClick={() => handleCardClick(c)}
             live={c.live}
             donate={!!c.givebutter_url}
           />
@@ -246,7 +311,7 @@ const Cases = () => {
         </div>
       )}
 
-      <Modal isOpen={!!activeCase} onClose={() => setActiveCase(null)} wide stickyHeader={
+      <Modal isOpen={!!activeCase} onClose={handleClose} wide stickyHeader={
         activeCase && (
           <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "8px", position: "relative" }}>
             <p style={{ fontWeight: "bold", fontSize: "17.5px", margin: 0 }}>{activeCase.title || activeCase.name}</p>
@@ -282,11 +347,11 @@ const Cases = () => {
                     onClick={() => setViewerImage(activeCase.image)}
                   />
                   {activeCase.givebutter_url && (
-                    <button className="givebutter-donate-btn" onClick={() => setShowGivebutter(true)} style={{ marginBottom: "12px" }}>
+                    <button className="btn btn-green" onClick={() => setShowGivebutter(true)} style={{ marginBottom: "12px" }}>
                       <i className="fas fa-dollar-sign" style={{marginRight: "5px"}}></i>Donate to this case
                     </button>
                   )}
-                  <div style={{ color: "rgba(0,0,0,0.7)", textAlign: "left", width: "100%" }}>
+                  <div style={{ color: "rgba(0,0,0,0.7)", textAlign: "left", width: "100%", marginBottom: "12px" }}>
                     <p style={{ margin: "0 0 4px 0" }}><b>Date:</b> {activeCase.date}</p>
                     {activeCase.type && (
                       <p style={{ margin: 0 }}><b>Service:</b> {activeCase.type === "genetic-genealogy" ? "Genetic Genealogy" : "Law Enforcement"}</p>
