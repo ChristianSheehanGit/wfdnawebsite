@@ -314,6 +314,7 @@ p {
   background-size: cover;
   background-position: center;
   padding: 20px;
+  height: 325px;
 }
 
 .banner-overlay {
