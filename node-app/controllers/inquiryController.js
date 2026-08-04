@@ -1,43 +1,102 @@
 /**
- * Inquiry Controller - placeholder
- * Handles receiving contact form submissions, sending confirmation emails,
- * and forwarding inquiry data to the internal admin email.
+ * Inquiry Controller
+ * Handles receiving inquiry form submissions and sending confirmation emails.
  */
 
 const Inquiry = require('../models/Inquiry');
 const emailService = require('../services/emailService');
-const db = require('../services/firestoreDbService');
+
+/**
+ * Build a readable summary of all the form's fields.
+ * @param {Object} data - The full payload from the form
+ * @returns {string} A formatted summary of every field/value
+ */
+function buildMessageSummary(data) {
+  const labelMap = {
+    firstName: 'First Name',
+    lastName: 'Last Name',
+    jobTitle: 'Job Title',
+    phoneNumber: 'Phone Number',
+    emailAddress: 'Email Address',
+    stateRegion: 'State/Province/Region',
+    county: 'County',
+    country: 'Country',
+    agencyName: 'Agency Name',
+    codisProfile: 'Has a profile been entered into CODIS?',
+    approvedLabs: 'Approved labs per state laws',
+    priorDnaTesting: 'Prior DNA testing',
+    samplesAvailable: 'Samples available for DNA testing',
+    caseName: 'Case name',
+    namusNumber: 'NamUs Number',
+    previousIgg: 'Previous investigative genetic genealogy',
+    otherInfo: 'Other relevant information',
+    heardAbout: 'How did you hear about us?',
+    dateOfBirth: 'Date of Birth',
+    placeOfBirth: 'Place of Birth',
+    dnaTest: 'DNA test taken',
+    dnaUpload: 'DNA uploaded to public databases',
+    previousResearch: 'Previous genealogical research',
+    searchingFor: 'Searching for biological mother/father/both',
+    researchFindings: 'Previous research findings',
+    additionalInfo: 'Additional information',
+    inquiryType: 'Inquiry Type',
+    other: 'Other',
+  };
+
+  const excludeKeys = ['name', 'email', 'phone', 'subject', 'message', 'inquiryType'];
+
+  const lines = [];
+  if (data.inquiryType) {
+    lines.push(`Inquiry Type: ${data.inquiryType}`);
+  }
+  for (const [key, value] of Object.entries(data)) {
+    if (excludeKeys.includes(key) || value === undefined || value === null) {
+      continue;
+    }
+    const strValue = String(value).trim();
+    if (!strValue) {
+      continue;
+    }
+    const label = labelMap[key] || key;
+    lines.push(`${label}: ${strValue}`);
+  }
+  return lines.join('\n');
+}
 
 /**
  * POST /api/inquiries
- * Submit a contact form inquiry.
- * Body: { name, email, phone, subject, message }
+ * Submit an inquiry form.
+ * Body: All form fields (e.g. firstName, lastName, emailAddress, ...)
+ *       plus derived fields { name, email, inquiryType }.
+ * Sends a confirmation email to the address provided in the form.
  */
 async function submitInquiry(req, res) {
   try {
-    const { name, email, phone, subject, message } = req.body;
+    const data = req.body || {};
+
+    // Derived fields sent from the frontend
+    const name = (data.name || '').trim();
+    const email = (data.email || '').trim();
+    const phone = data.phoneNumber || data.phone || '';
+    const subject = data.inquiryType || 'Website Inquiry';
+    const message = buildMessageSummary(data);
+
     const inquiry = new Inquiry({ name, email, phone, subject, message });
 
     if (!inquiry.isValid()) {
-      return res.status(400).json({ success: false, error: 'Invalid inquiry. Name, email, and message are required.' });
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid inquiry. Name and email are required.',
+      });
     }
 
-    // Save inquiry to Firestore
-    const inquiryId = await db.insert('inquiries', {
-      name: inquiry.name,
-      email: inquiry.email,
-      phone: inquiry.phone,
-      subject: inquiry.subject,
-      message: inquiry.message,
-    });
-
-    // Send confirmation to the submitter and forward to admin
-    const emailResults = await emailService.processInquiryEmails(inquiry);
+    // Send confirmation email to the address entered in the form
+    const emailResult = await emailService.sendConfirmationEmail(inquiry);
 
     res.status(201).json({
       success: true,
       message: 'Inquiry submitted successfully',
-      data: { id: inquiryId, inquiry, emails: emailResults },
+      data: { inquiry, emails: { confirmation: emailResult } },
     });
   } catch (err) {
     console.error('[inquiryController] submitInquiry error:', err.message);

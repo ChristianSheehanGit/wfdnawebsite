@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import Navbar from "./components/navbar.jsx";
 import Footer from "./components/footer.jsx";
+import { submitInquiry } from "./api.js";
 import "./App.css";
 import "./inquiry.css";
 
@@ -86,13 +87,15 @@ const Inquiry = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({});
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const [otherText, setOtherText] = useState("");
 
   const handleChange = (name, value) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     const currentFields = steps[currentStep].fields;
     for (const field of currentFields) {
       if (field.required && !formData[field.name]?.trim()) {
@@ -102,7 +105,25 @@ const Inquiry = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep((prev) => prev + 1);
     } else {
-      setSubmitted(true);
+      // Final submit: gather ALL form data and send to the backend,
+      // which sends a confirmation email to the address in the form.
+      setSubmitting(true);
+      setSubmitError("");
+      try {
+        const payload = {
+          ...formData,
+          name: `${formData.firstName || ""} ${formData.lastName || ""}`.trim(),
+          email: formData.emailAddress || "",
+          inquiryType: isLawEnforcement ? "Law Enforcement" : "Genetic Genealogy",
+        };
+        await submitInquiry(payload);
+        setSubmitted(true);
+      } catch (err) {
+        console.error("[Inquiry] Submit failed:", err);
+        setSubmitError(err.message || "Failed to submit inquiry. Please try again.");
+      } finally {
+        setSubmitting(false);
+      }
     }
   };
 
@@ -120,7 +141,7 @@ const Inquiry = () => {
         <div className="inquiry-container">
           <div className="inquiry-submitted">
             <p style={{ fontWeight: "bold" }}>Inquiry Submitted</p>
-            <p>Thank you for your submission. Someone from our team will be in contact with you shortly.</p>
+            <p>Thank you for your submission. A confirmation email has been sent to {formData.emailAddress}. Someone from our team will be in contact with you shortly.</p>
             <button className="btn btn-blue" onClick={() => { setCurrentStep(0); setFormData({}); setSubmitted(false); setOtherText(""); }}>
               Submit Another Inquiry
             </button>
@@ -188,12 +209,18 @@ const Inquiry = () => {
             </div>
           ))}
 
+          {submitError && (
+            <p style={{ color: "red", fontWeight: "bold", marginTop: "12px" }}>
+              {submitError}
+            </p>
+          )}
+
           <div className="inquiry-buttons">
             {currentStep > 0 && (
               <button className="btn btn-blue" onClick={handleBack}>Back</button>
             )}
-            <button className="btn btn-blue" onClick={handleNext}>
-              {currentStep < steps.length - 1 ? "Next" : "Submit"}
+            <button className="btn btn-blue" onClick={handleNext} disabled={submitting}>
+              {submitting ? "Submitting..." : currentStep < steps.length - 1 ? "Next" : "Submit"}
             </button>
           </div>
         </div>

@@ -26,6 +26,24 @@ async function request(path, options = {}) {
 }
 
 // ---------------------------------------------------------------------------
+// Inquiries API
+// ---------------------------------------------------------------------------
+
+/**
+ * Submit an inquiry form. Sends all form data to the backend, which
+ * sends a confirmation email to the address provided in the form.
+ * @param {Object} data - All form fields plus derived { name, email, inquiryType }
+ * @returns {Promise<Object>} The API response
+ */
+export async function submitInquiry(data) {
+  const res = await request('/inquiries', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+  return res;
+}
+
+// ---------------------------------------------------------------------------
 // Team Members API
 // ---------------------------------------------------------------------------
 
