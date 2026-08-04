@@ -1,33 +1,110 @@
 /**
- * Email Service - placeholder
+ * Email Service
  * Handles sending confirmation emails for inquiries and forwarding
- * inquiry data to an internal email address.
- * In production, this would use nodemailer, SendGrid, SES, etc.
+ * inquiry data to an internal email address using Nodemailer via SMTP.
  */
 
-const FROM_EMAIL = process.env.FROM_EMAIL || 'noreply@wolfpackdna.com';
-const INTERNAL_EMAIL = process.env.INTERNAL_EMAIL || 'admin@wolfpackdna.com';
+const nodemailer = require('nodemailer');
+
+// ---------------------------------------------------------------------------
+// Configuration from environment variables (read lazily at send time so
+// this module works regardless of when dotenv is loaded).
+// ---------------------------------------------------------------------------
+function getConfig() {
+  const EMAIL_HOST = process.env.EMAIL_HOST || 'smtp.gmail.com';
+  const EMAIL_PORT = parseInt(process.env.EMAIL_PORT || '465', 10);
+  const EMAIL_USER = process.env.EMAIL_USER || 'submissions@wolfpackdna.com';
+  const EMAIL_APP_PASSWORD = process.env.EMAIL_APP_PASSWORD || '';
+  const FROM_EMAIL = process.env.FROM_EMAIL || EMAIL_USER;
+  const INTERNAL_EMAIL = process.env.INTERNAL_EMAIL || 'admin@wolfpackdna.com';
+
+  return {
+    host: EMAIL_HOST,
+    port: EMAIL_PORT,
+    user: EMAIL_USER,
+    appPassword: EMAIL_APP_PASSWORD,
+    fromEmail: FROM_EMAIL,
+    internalEmail: INTERNAL_EMAIL,
+  };
+}
+
+let cachedTransporter = null;
+
+/**
+ * Get a nodemailer transporter. Uses a connection pool so multiple
+ * sends (confirmation + internal forward) reuse the same SMTP connection.
+ */
+function getTransporter() {
+  if (cachedTransporter) {
+    return cachedTransporter;
+  }
+
+  const { host, port, user, appPassword } = getConfig();
+
+  cachedTransporter = nodemailer.createTransport({
+    host,
+    port,
+    secure: port === 465, // true for 465, false for 587/STARTTLS
+    auth: {
+      user,
+      pass: appPassword,
+    },
+  });
+
+  return cachedTransporter;
+}
+
+function emailServiceEnabled() {
+  return Boolean(getConfig().appPassword);
+}
 
 /**
  * Send a confirmation email to the person who submitted an inquiry.
- * @param {Object} inquiry - { name, email, subject, message, ... }
+ * @param {Object} inquiry - { name, email, phone, subject, message, ... }
  */
 async function sendConfirmationEmail(inquiry) {
-  // TODO: Implement with nodemailer / SendGrid / SES
-  // const msg = {
-  //   to: inquiry.email,
-  //   from: FROM_EMAIL,
-  //   subject: `We received your inquiry: ${inquiry.subject}`,
-  //   text: `Hi ${inquiry.name},\n\nThank you for contacting Wolfpack DNA. We've received your message and will get back to you shortly.\n\nYour message:\n${inquiry.message}`,
-  // };
-  // await sgMail.send(msg);
+  if (!emailServiceEnabled()) {
+    console.warn(
+      '[Email] EMAIL_APP_PASSWORD not set. Skipping confirmation email to ' + inquiry.email
+    );
+    return { success: false, skipped: true, reason: 'EMAIL_APP_PASSWORD not configured' };
+  }
 
-  console.log(`[PLACEHOLDER EMAIL] Sending confirmation to ${inquiry.email}`);
-  console.log(`  From: ${FROM_EMAIL}`);
-  console.log(`  Subject: We received your inquiry: ${inquiry.subject}`);
-  console.log(`  Body: Thank you ${inquiry.name}, we'll be in touch.`);
+  const { fromEmail } = getConfig();
 
-  return { success: true, messageId: `placeholder-msg-${Date.now()}` };
+  const subject = inquiry.subject
+    ? `We received your inquiry: ${inquiry.subject}`
+    : 'We received your inquiry';
+
+  const text = [
+    `Hi ${inquiry.name},`,
+    '',
+    'Thank you for contacting Wolfpack DNA. We have received your message and',
+    'will get back to you shortly.',
+    '',
+    '--- Your message ---',
+    inquiry.subject ? `Subject: ${inquiry.subject}` : '',
+    inquiry.phone ? `Phone: ${inquiry.phone}` : '',
+    '',
+    inquiry.message,
+    '',
+    '---------------------------',
+    '',
+    'Best regards,',
+    'The Wolfpack DNA Team',
+  ]
+    .filter((line) => line !== '')
+    .join('\n');
+
+  const info = await getTransporter().sendMail({
+    from: `"Wolfpack DNA" <${fromEmail}>`,
+    to: inquiry.email,
+    subject,
+    text,
+  });
+
+  console.log(`[Email] Confirmation sent to ${inquiry.email}: ${info.messageId}`);
+  return { success: true, messageId: info.messageId };
 }
 
 /**
@@ -35,18 +112,39 @@ async function sendConfirmationEmail(inquiry) {
  * @param {Object} inquiry
  */
 async function forwardInquiryToAdmin(inquiry) {
-  // TODO: Implement with nodemailer / SendGrid / SES
-  console.log(`[PLACEHOLDER EMAIL] Forwarding inquiry to ${INTERNAL_EMAIL}`);
-  console.log(`  From: ${FROM_EMAIL}`);
-  console.log(`  Subject: [New Inquiry] ${inquiry.subject} from ${inquiry.name}`);
-  console.log(`  Body:`);
-  console.log(`    Name: ${inquiry.name}`);
-  console.log(`    Email: ${inquiry.email}`);
-  console.log(`    Phone: ${inquiry.phone}`);
-  console.log(`    Subject: ${inquiry.subject}`);
-  console.log(`    Message: ${inquiry.message}`);
+  if (!emailServiceEnabled()) {
+    console.warn('[Email] EMAIL_APP_PASSWORD not set. Skipping internal forward.');
+    return { success: false, skipped: true, reason: 'EMAIL_APP_PASSWORD not configured' };
+  }
 
-  return { success: true, messageId: `placeholder-msg-${Date.now()}` };
+  const { fromEmail, internalEmail } = getConfig();
+
+  const subject = `[New Inquiry] ${inquiry.subject || 'No subject'} from ${inquiry.name}`;
+
+  const text = [
+    'A new inquiry has been submitted on the Wolfpack DNA website:',
+    '',
+    `Name: ${inquiry.name}`,
+    `Email: ${inquiry.email}`,
+    inquiry.phone ? `Phone: ${inquiry.phone}` : 'Phone: N/A',
+    `Subject: ${inquiry.subject || 'N/A'}`,
+    '',
+    'Message:',
+    inquiry.message,
+    '',
+    `Submitted: ${new Date().toISOString()}`,
+  ].join('\n');
+
+  const info = await getTransporter().sendMail({
+    from: `"Wolfpack DNA Website" <${fromEmail}>`,
+    to: internalEmail,
+    replyTo: inquiry.email,
+    subject,
+    text,
+  });
+
+  console.log(`[Email] Internal forward sent to ${internalEmail}: ${info.messageId}`);
+  return { success: true, messageId: info.messageId };
 }
 
 /**

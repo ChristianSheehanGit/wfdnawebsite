@@ -1,6 +1,10 @@
+// Load environment variables from .env FIRST so all required modules
+// (controllers, services, etc.) can read them at load time.
+const dotenv = require('dotenv');
+dotenv.config();
+
 const express = require('express');
 const cors = require('cors');
-const dotenv = require('dotenv');
 const firebaseAdmin = require('firebase-admin');
 const { getFirestore } = require('firebase-admin/firestore');
 const firestoreDb = require('./services/firestoreDbService');
@@ -9,9 +13,6 @@ const caseRoutes = require('./routes/caseRoutes');
 const teamRoutes = require('./routes/teamRoutes');
 const inquiryRoutes = require('./routes/inquiryRoutes');
 const imageRoutes = require('./routes/imageRoutes');
-
-// Load environment variables from .env
-dotenv.config();
 
 // ---------------------------------------------------------------------------
 // Firebase Admin SDK Initialization
