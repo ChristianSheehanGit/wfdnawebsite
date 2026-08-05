@@ -7,9 +7,24 @@ const Inquiry = require('../models/Inquiry');
 const emailService = require('../services/emailService');
 
 /**
- * Build a readable summary of all the form's fields.
+ * Escape a value for safe inclusion in HTML email body.
+ * @param {string} value
+ * @returns {string}
+ */
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, '&#38;')
+    .replace(/</g, '&#60;')
+    .replace(/>/g, '&#62;')
+    .replace(/"/g, '&#34;')
+    .replace(/'/g, '&#39;');
+}
+
+/**
+ * Build a readable HTML summary of all the form's fields.
+ * Each label is underlined (using <u> tags) followed by the value.
  * @param {Object} data - The full payload from the form
- * @returns {string} A formatted summary of every field/value
+ * @returns {string} An HTML string of every field/value
  */
 function buildMessageSummary(data) {
   const labelMap = {
@@ -47,7 +62,7 @@ function buildMessageSummary(data) {
 
   const lines = [];
   if (data.inquiryType) {
-    lines.push(`Inquiry Type: ${data.inquiryType}`);
+    lines.push(`<u>Inquiry Type:</u> ${escapeHtml(data.inquiryType)}`);
   }
   for (const [key, value] of Object.entries(data)) {
     if (excludeKeys.includes(key) || value === undefined || value === null) {
@@ -58,9 +73,9 @@ function buildMessageSummary(data) {
       continue;
     }
     const label = labelMap[key] || key;
-    lines.push(`${label}: ${strValue}`);
+    lines.push(`<u>${escapeHtml(label)}:</u> ${escapeHtml(strValue)}`);
   }
-  return lines.join('\n');
+  return lines.join('<br>');
 }
 
 /**
@@ -68,7 +83,8 @@ function buildMessageSummary(data) {
  * Submit an inquiry form.
  * Body: All form fields (e.g. firstName, lastName, emailAddress, ...)
  *       plus derived fields { name, email, inquiryType }.
- * Sends a confirmation email to the address provided in the form.
+ * Sends a confirmation email to the address provided in the form
+ * and forwards the full inquiry to the configured admin email.
  */
 async function submitInquiry(req, res) {
   try {
@@ -90,13 +106,13 @@ async function submitInquiry(req, res) {
       });
     }
 
-    // Send confirmation email to the address entered in the form
-    const emailResult = await emailService.sendConfirmationEmail(inquiry);
+    // Send confirmation to the submitter and forward the full inquiry to the admin email
+    const emailResults = await emailService.processInquiryEmails(inquiry);
 
     res.status(201).json({
       success: true,
       message: 'Inquiry submitted successfully',
-      data: { inquiry, emails: { confirmation: emailResult } },
+      data: { inquiry, emails: emailResults },
     });
   } catch (err) {
     console.error('[inquiryController] submitInquiry error:', err.message);

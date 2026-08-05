@@ -59,6 +59,26 @@ function emailServiceEnabled() {
 }
 
 /**
+ * Convert an HTML message (from the inquiry summary) into a plain-text
+ * fallback for email clients that do not render HTML.
+ * @param {string} html
+ * @returns {string}
+ */
+function htmlToText(html) {
+  return String(html)
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/u>/gi, '')
+    .replace(/<u>/gi, '')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&#38;/g, '&')
+    .replace(/&#60;/g, '<')
+    .replace(/&#62;/g, '>')
+    .replace(/&#34;/g, '"')
+    .replace(/&#39;/g, "'")
+    .trim();
+}
+
+/**
  * Send a confirmation email to the person who submitted an inquiry.
  * @param {Object} inquiry - { name, email, phone, subject, message, ... }
  */
@@ -76,31 +96,35 @@ async function sendConfirmationEmail(inquiry) {
     ? `We received your inquiry: ${inquiry.subject}`
     : 'We received your inquiry';
 
+  const messageHtml = inquiry.message || '';
+  const messageText = htmlToText(inquiry.message || '');
+
+  const html = [
+    `<p>Hi ${htmlToText(inquiry.name)},</p>`,
+    '<p>Thank you for contacting Wolfpack DNA. We have received your inquiry and will get back to you shortly.</p>',
+    '<p><u>--- Your inquiry ---</u></p>',
+    `<p>${messageHtml}</p>`,
+    '<p>Best regards,<br>The Wolfpack DNA Team</p>',
+  ].join('\n');
+
   const text = [
     `Hi ${inquiry.name},`,
     '',
-    'Thank you for contacting Wolfpack DNA. We have received your message and',
-    'will get back to you shortly.',
+    'Thank you for contacting Wolfpack DNA. We have received your inquiry and will get back to you shortly.',
     '',
-    '--- Your message ---',
-    inquiry.subject ? `Subject: ${inquiry.subject}` : '',
-    inquiry.phone ? `Phone: ${inquiry.phone}` : '',
-    '',
-    inquiry.message,
-    '',
-    '---------------------------',
+    '--- Your inquiry ---',
+    messageText,
     '',
     'Best regards,',
     'The Wolfpack DNA Team',
-  ]
-    .filter((line) => line !== '')
-    .join('\n');
+  ].join('\n');
 
   const info = await getTransporter().sendMail({
     from: `"Wolfpack DNA" <${fromEmail}>`,
     to: inquiry.email,
     subject,
     text,
+    html,
   });
 
   console.log(`[Email] Confirmation sent to ${inquiry.email}: ${info.messageId}`);
@@ -121,6 +145,22 @@ async function forwardInquiryToAdmin(inquiry) {
 
   const subject = `[New Inquiry] ${inquiry.subject || 'No subject'} from ${inquiry.name}`;
 
+  const messageHtml = inquiry.message || '';
+  const messageText = htmlToText(inquiry.message || '');
+
+  const html = [
+    '<p>A new inquiry has been submitted on the Wolfpack DNA website:</p>',
+    '<p>',
+    `<u>Name:</u> ${htmlToText(inquiry.name)}<br>`,
+    `<u>Email:</u> ${htmlToText(inquiry.email)}<br>`,
+    inquiry.phone ? `<u>Phone:</u> ${htmlToText(inquiry.phone)}<br>` : '',
+    `<u>Subject:</u> ${htmlToText(inquiry.subject || 'N/A')}<br>`,
+    '</p>',
+    '<p><u>Message:</u></p>',
+    `<p>${messageHtml}</p>`,
+    `<p><u>Submitted:</u> ${new Date().toISOString()}</p>`,
+  ].join('\n');
+
   const text = [
     'A new inquiry has been submitted on the Wolfpack DNA website:',
     '',
@@ -130,7 +170,7 @@ async function forwardInquiryToAdmin(inquiry) {
     `Subject: ${inquiry.subject || 'N/A'}`,
     '',
     'Message:',
-    inquiry.message,
+    messageText,
     '',
     `Submitted: ${new Date().toISOString()}`,
   ].join('\n');
@@ -141,6 +181,7 @@ async function forwardInquiryToAdmin(inquiry) {
     replyTo: inquiry.email,
     subject,
     text,
+    html,
   });
 
   console.log(`[Email] Internal forward sent to ${internalEmail}: ${info.messageId}`);
