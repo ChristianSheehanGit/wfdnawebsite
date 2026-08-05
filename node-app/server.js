@@ -13,6 +13,7 @@ const caseRoutes = require('./routes/caseRoutes');
 const teamRoutes = require('./routes/teamRoutes');
 const inquiryRoutes = require('./routes/inquiryRoutes');
 const imageRoutes = require('./routes/imageRoutes');
+const authRoutes = require('./routes/authRoutes');
 
 // ---------------------------------------------------------------------------
 // Firebase Admin SDK Initialization
@@ -105,6 +106,7 @@ app.use('/api/cases', caseRoutes);
 app.use('/api/team', teamRoutes);
 app.use('/api/inquiries', inquiryRoutes);
 app.use('/api/images', imageRoutes);
+app.use('/api/auth', authRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

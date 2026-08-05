@@ -6,6 +6,7 @@ import Modal from "./components/modal.jsx";
 import RichTextEditor from "./components/RichTextEditor.jsx";
 import { useImages } from "./ImageContext.jsx";
 import {
+  adminLogin,
   fetchTeamMembers,
   createTeamMember,
   updateTeamMember,
@@ -105,8 +106,6 @@ function DraggableTeamCard({ member, onEdit, onClick, onDragStart, onDragOver, o
     </div>
   );
 }
-
-const ADMIN_PASSWORD = "admin123";
 
 const Admin = () => {
   const [authenticated, setAuthenticated] = useState(false);
@@ -237,14 +236,15 @@ const Admin = () => {
   const [addDirty, setAddDirty] = useState(false);
   const [editDirty, setEditDirty] = useState(false);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (password === ADMIN_PASSWORD) {
+    setError("");
+    try {
+      await adminLogin(password);
       setAuthenticated(true);
-      setError("");
       setPassword("");
-    } else {
-      setError("Incorrect password");
+    } catch (err) {
+      setError(err.message || "Incorrect password");
     }
   };
 

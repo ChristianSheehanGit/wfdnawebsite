@@ -26,6 +26,23 @@ async function request(path, options = {}) {
 }
 
 // ---------------------------------------------------------------------------
+// Auth API
+// ---------------------------------------------------------------------------
+
+/**
+ * Verify the admin password against the server-side env var.
+ * @param {string} password
+ * @returns {Promise<Object>} The API response
+ */
+export async function adminLogin(password) {
+  const res = await request('/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({ password }),
+  });
+  return res;
+}
+
+// ---------------------------------------------------------------------------
 // Inquiries API
 // ---------------------------------------------------------------------------
 
