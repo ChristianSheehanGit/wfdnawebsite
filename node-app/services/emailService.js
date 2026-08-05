@@ -151,12 +151,6 @@ async function forwardInquiryToAdmin(inquiry) {
   const html = [
     '<p>A new inquiry has been submitted on the Wolfpack DNA website:</p>',
     '<p>',
-    `<u>Name:</u> ${htmlToText(inquiry.name)}<br>`,
-    `<u>Email:</u> ${htmlToText(inquiry.email)}<br>`,
-    inquiry.phone ? `<u>Phone:</u> ${htmlToText(inquiry.phone)}<br>` : '',
-    `<u>Subject:</u> ${htmlToText(inquiry.subject || 'N/A')}<br>`,
-    '</p>',
-    '<p><u>Message:</u></p>',
     `<p>${messageHtml}</p>`,
     `<p><u>Submitted:</u> ${new Date().toISOString()}</p>`,
   ].join('\n');
