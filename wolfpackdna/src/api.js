@@ -70,6 +70,7 @@ export async function fetchTeamMembers() {
 }
 
 export async function createTeamMember(data) {
+  assertStorableImage(data);
   const res = await request('/team', {
     method: 'POST',
     body: JSON.stringify(data),
@@ -78,6 +79,7 @@ export async function createTeamMember(data) {
 }
 
 export async function updateTeamMember(id, data) {
+  assertStorableImage(data);
   const res = await request(`/team/${id}`, {
     method: 'PUT',
     body: JSON.stringify(data),
@@ -108,6 +110,7 @@ export async function fetchCases() {
 }
 
 export async function createCase(data) {
+  assertStorableImage(data);
   const res = await request('/cases', {
     method: 'POST',
     body: JSON.stringify(data),
@@ -116,6 +119,7 @@ export async function createCase(data) {
 }
 
 export async function updateCase(id, data) {
+  assertStorableImage(data);
   const res = await request(`/cases/${id}`, {
     method: 'PUT',
     body: JSON.stringify(data),
@@ -131,6 +135,21 @@ export async function deleteCase(id) {
 // ---------------------------------------------------------------------------
 // Image Upload API
 // ---------------------------------------------------------------------------
+
+/**
+ * Safety guard: never allow a transient blob: preview URL to be persisted.
+ * URL.createObjectURL() produces "blob:https://..." URLs that are only valid
+ * within the current browser session, so they render blank once saved. If a
+ * record is about to be written with one, abort with a clear error so the
+ * caller falls back gracefully instead of silently saving a dead URL.
+ */
+function assertStorableImage(data) {
+  if (data && typeof data.image === "string" && data.image.startsWith("blob:")) {
+    throw new Error(
+      "Image upload did not complete, so no saved image was stored. A blob: preview URL cannot be saved — please try uploading the image again."
+    );
+  }
+}
 
 /**
  * Upload a file to the GCS bucket and return its public URL.

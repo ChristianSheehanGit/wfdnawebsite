@@ -2,10 +2,10 @@
 import React from "react";
 import "./card.css";
 
-const Card = ({ image, title, subtitle, onClick, live, donate }) => {
+const Card = ({ image, title, subtitle, onClick, live, donate, fit }) => {
   return (
     <div className="card" onClick={onClick}>
-      <div className="card-image-wrapper">
+      <div className={`card-image-wrapper${fit ? " card-image-fit" : ""}`}>
         <img src={image} alt={title} className="card-image" />
         {live && <span className="card-live-indicator">LIVE</span>}
         {donate && <span className="card-donate-indicator"><i className="fas fa-dollar-sign"></i></span>}

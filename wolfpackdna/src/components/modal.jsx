@@ -1,5 +1,6 @@
 // components/modal.jsx
 import React, { useEffect, useState, useCallback } from "react";
+import { createPortal } from "react-dom";
 import "./modal.css";
 
 const Modal = ({ isOpen, onClose, children, wide = false, stickyHeader = null, dirty = false, onDiscard, onSaveAndClose, className = "", centeredHeader = false }) => {
@@ -31,6 +32,21 @@ const Modal = ({ isOpen, onClose, children, wide = false, stickyHeader = null, d
     }
   }, [showConfirm, handleCancel, dirty, onClose]);
 
+  // Open any hyperlink inside the modal body in a new tab, so clicking a link in
+  // rich content (e.g. case/team descriptions) never navigates the site away or
+  // closes the modal. Only external-style links (http/https, mailto, tel) are
+  // intercepted; hashes/anchors keep their default behavior.
+  const handleBodyClick = (e) => {
+    const anchor = e.target && e.target.closest ? e.target.closest("a") : null;
+    if (anchor) {
+      const href = anchor.getAttribute("href");
+      if (href && /^(https?:|mailto:|tel:)/i.test(href)) {
+        e.preventDefault();
+        window.open(href, "_blank", "noopener,noreferrer");
+      }
+    }
+  };
+
   useEffect(() => {
     if (!isOpen) return;
 
@@ -49,14 +65,18 @@ const Modal = ({ isOpen, onClose, children, wide = false, stickyHeader = null, d
 
   if (!isOpen) return null;
 
-  return (
+  // Render through a portal to document.body so the fixed overlay always covers
+  // the whole viewport. Without this, an ancestor with filter/transform/
+  // backdrop-filter (e.g. the footer's backdrop-filter) becomes the containing
+  // block for position:fixed descendants and confines the modal to that box.
+  return createPortal(
     <div className="modal-overlay" onClick={handleClose}>
       <div className={`modal-content ${wide ? "modal-wide" : ""}`} onClick={(e) => e.stopPropagation()}>
         <div className={centeredHeader ? "modal-header modal-header--centered" : "modal-header"}>
           <button className="modal-close" onClick={handleClose}>×</button>
           {stickyHeader}
         </div>
-        <div className={`modal-body ${className}`}>
+        <div className={`modal-body ${className}`} onClick={handleBodyClick}>
           {children}
         </div>
         {showConfirm && (
@@ -80,7 +100,8 @@ const Modal = ({ isOpen, onClose, children, wide = false, stickyHeader = null, d
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

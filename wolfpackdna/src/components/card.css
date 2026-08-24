@@ -23,6 +23,18 @@
   position: relative;
 }
 
+/* Fit mode: keep the fixed card width, but do NOT crop the image to a square.
+   Let the image render at its natural aspect ratio (height = auto) so the whole
+   picture is always visible regardless of its dimensions. */
+.card-image-wrapper.card-image-fit {
+  aspect-ratio: auto;
+}
+
+.card-image-wrapper.card-image-fit .card-image {
+  height: auto;
+  object-fit: contain;
+}
+
 .card-live-indicator {
   position: absolute;
   top: 8px;

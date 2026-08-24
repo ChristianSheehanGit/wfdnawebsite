@@ -25,3 +25,14 @@ footer {
 .footer-links a:active {
   transform: scale(0.95);
 }
+
+.footer-privacy-link {
+  color: rgb(0, 0, 0, 0.7);
+  text-decoration: underline;
+  transition: opacity 0.1s;
+}
+
+.footer-privacy-link:hover {
+  opacity: 1;
+  color: rgb(0, 0, 0);
+}

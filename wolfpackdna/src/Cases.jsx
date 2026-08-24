@@ -306,6 +306,7 @@ const Cases = () => {
             onClick={() => handleCardClick(c)}
             live={c.live}
             donate={!!c.givebutter_url}
+            fit
           />
           ))}
         </div>

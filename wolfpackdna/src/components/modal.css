@@ -66,6 +66,18 @@
 .modal-header p {
   max-width:70%;
 }
+
+/* Force the site's imported font face on the modal titles rendered in the
+   sticky header (the <p> passed in via stickyHeader). Unlike the modal body
+   (which enforces font-family via .modal-body *), the header titles otherwise
+   fall back to the browser's default font. */
+.modal-header,
+.modal-header p,
+.modal-header h1,
+.modal-header h2,
+.modal-header h3 {
+  font-family: "font", sans-serif;
+}
 .modal-header span {
   left: -10px !important;
 }

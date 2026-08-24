@@ -196,6 +196,7 @@ const Home = () => {
                 onClick={() => setActiveCase(c)}
                 live={c.live}
                 donate={!!c.givebutter_url}
+                fit
               />
             ))}
           </div>

@@ -318,6 +318,9 @@ const Admin = () => {
   const [caseImageName, setCaseImageName] = useState("");
   const [teamImageName, setTeamImageName] = useState("");
   const [editImageName, setEditImageName] = useState("");
+  // The actual File object for a newly chosen image during an edit. This is what
+  // gets uploaded to GCS on save; the preview is only a transient blob: URL.
+  const [editImageFile, setEditImageFile] = useState(null);
 
   const openAddModal = (type) => {
     setShowAddModal(type);
@@ -389,7 +392,9 @@ const Admin = () => {
     const descriptionText = getTextContent(caseDescription);
     if (!caseTitle.trim() || !caseDate.trim() || !descriptionText.trim()) return;
 
-    let imageUrl = caseImagePreview || "https://placehold.co/300x300/eee/999?text=Case";
+    // Default to a placeholder. Never persist a transient blob: preview URL —
+    // only replace with a real GCS URL once the upload has fully succeeded.
+    let imageUrl = "https://placehold.co/300x300/eee/999?text=Case";
 
     if (caseImage) {
       try {
@@ -397,6 +402,7 @@ const Admin = () => {
         imageUrl = await uploadImage(caseImage, filename);
       } catch (err) {
         console.error("Image upload failed, using placeholder:", err);
+        imageUrl = "https://placehold.co/300x300/eee/999?text=Case";
       }
     }
 
@@ -422,7 +428,9 @@ const Admin = () => {
     const descriptionText = getTextContent(teamDescription);
     if (!teamName.trim() || !teamRole.trim() || !descriptionText.trim()) return;
 
-    let imageUrl = teamImagePreview || "https://placehold.co/300x300/eee/999?text=Team";
+    // Default to a placeholder. Never persist a transient blob: preview URL —
+    // only replace with a real GCS URL once the upload has fully succeeded.
+    let imageUrl = "https://placehold.co/300x300/eee/999?text=Team";
 
     if (teamImage) {
       try {
@@ -430,6 +438,7 @@ const Admin = () => {
         imageUrl = await uploadImage(teamImage, filename);
       } catch (err) {
         console.error("Image upload failed, using placeholder:", err);
+        imageUrl = "https://placehold.co/300x300/eee/999?text=Team";
       }
     }
 
@@ -450,6 +459,7 @@ const Admin = () => {
   // --- Edit modal handlers ---
   const openEditModal = (type, item) => {
     setEditModal({ type, item });
+    setEditImageFile(null);
     if (type === "case") {
       setEditTitle(item.title || item.name || "");
       setEditDate(item.date || "");
@@ -472,6 +482,7 @@ const Admin = () => {
     setEditDate("");
     setEditDescription("");
     setEditImagePreview("");
+    setEditImageFile(null);
     setEditCategory("law-enforcement");
     setEditLive(false);
     setEditGivebutterUrl("");
@@ -480,6 +491,7 @@ const Admin = () => {
   const handleEditImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
+      setEditImageFile(file);
       setEditImagePreview(URL.createObjectURL(file));
       setEditImageName(file.name);
     }
@@ -491,6 +503,7 @@ const Admin = () => {
 
   const handleEditImageDelete = () => {
     setEditImagePreview("");
+    setEditImageFile(null);
     setEditImageName("");
   };
 
@@ -498,20 +511,42 @@ const Admin = () => {
     const descriptionText = getTextContent(editDescription);
     if (!editTitle.trim() || !editDate.trim() || !descriptionText.trim()) return;
 
+    // Resolve the image to persist. The preview may be a transient blob: URL, so
+    // never save that directly. Instead:
+    //   - New file chosen  -> upload to GCS, store the real URL
+    //   - Existing image kept -> keep the real URL already in the record
+    //   - Image deleted (empty preview) -> save an empty string
+    // On an upload failure, fall back to the previously stored image rather than
+    // writing a dead blob: URL to the database.
+    let finalImage = "";
+    if (editImageFile) {
+      try {
+        const prefix = editModal.type === "case" ? "cases" : "team";
+        const filename = `${prefix}/${Date.now()}-${editImageFile.name}`;
+        finalImage = await uploadImage(editImageFile, filename);
+      } catch (err) {
+        console.error("Image upload failed during edit, keeping previous image:", err);
+        finalImage = editModal.item.image || "";
+      }
+    } else if (editImagePreview && !editImagePreview.startsWith("blob:")) {
+      // No new file chosen; keep whatever real URL was already in the record.
+      finalImage = editImagePreview;
+    }
+
     try {
       if (editModal.type === "case") {
         await updateCase(editModal.item.id, {
           name: editTitle.trim(),
           date: editDate.trim(),
           description: editDescription,
-          image: editImagePreview,
+          image: finalImage,
           type: editCategory,
           live: editLive,
           givebutter_url: editGivebutterUrl.trim() || undefined,
         });
         setCases(cases.map((c) =>
           c.id === editModal.item.id
-            ? { ...c, name: editTitle.trim(), date: editDate.trim(), description: editDescription, image: editImagePreview, type: editCategory, live: editLive, givebutter_url: editGivebutterUrl.trim() }
+            ? { ...c, name: editTitle.trim(), date: editDate.trim(), description: editDescription, image: finalImage, type: editCategory, live: editLive, givebutter_url: editGivebutterUrl.trim() }
             : c
         ));
       } else {
@@ -519,11 +554,11 @@ const Admin = () => {
           name: editTitle.trim(),
           role: editDate.trim(),
           description: editDescription,
-          image: editImagePreview,
+          image: finalImage,
         });
         setTeam(team.map((m) =>
           m.id === editModal.item.id
-            ? { ...m, name: editTitle.trim(), role: editDate.trim(), description: editDescription, image: editImagePreview }
+            ? { ...m, name: editTitle.trim(), role: editDate.trim(), description: editDescription, image: finalImage }
             : m
         ));
       }
@@ -756,6 +791,7 @@ const Admin = () => {
                         onClick={() => setPreviewItem({ type: "case", item: c })}
                         live={c.live}
                         donate={!!c.givebutter_url}
+                        fit
                       />
                       <button className="admin-card-edit" onClick={() => openEditModal("case", c)} title="Edit case">
                         <i className="fas fa-pen"></i>
